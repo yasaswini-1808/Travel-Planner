@@ -1,0 +1,476 @@
+/* Auth Container with Animated Gradient Background */
+.auth-container {
+  background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Floating particles */
+.auth-container::before,
+.auth-container::after {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
+}
+
+.auth-container::before {
+  background: #ffcc70;
+  top: -100px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.auth-container::after {
+  background: #4f46e5;
+  bottom: -100px;
+  right: -100px;
+  animation-delay: 10s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+/* Auth Card with Enhanced Effects */
+.auth-card {
+  max-width: 480px;
+  min-height: 600px;
+  background: linear-gradient(135deg, #1b1f3b 0%, #252b4f 100%);
+  color: #fff;
+  position: relative;
+  border: 1px solid rgba(255, 204, 112, 0.2);
+  backdrop-filter: blur(10px);
+  animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  padding: 2rem !important;
+}
+
+.auth-card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 204, 112, 0.3) !important;
+}
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Lamp Container */
+.lamp-container {
+  animation: lampSwing 4s ease-in-out infinite;
+  transform-origin: top center;
+  position: relative;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@keyframes lampSwing {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+}
+
+/* Lamp Light Glow */
+.lamp-light {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 240, 160, 0.8),
+    rgba(255, 220, 120, 0.4) 50%,
+    transparent 70%
+  );
+  z-index: 1;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+  }
+}
+
+/* Lamp Head */
+.lamp-head {
+  width: 100px;
+  height: 65px;
+  background: linear-gradient(135deg, #ffcc70 0%, #ffb347 100%);
+  border-radius: 0 0 50px 50px;
+  position: relative;
+  z-index: 3;
+  box-shadow: 0 4px 15px rgba(255, 204, 112, 0.4);
+  transition: all 0.3s ease;
+  margin: 0 auto;
+}
+
+.lamp-head:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 204, 112, 0.6);
+}
+
+/* Eyes */
+.eye {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.1s ease;
+  display: inline-block;
+}
+
+/* Lamp Wire */
+.lamp-wire {
+  width: 3px;
+  height: 40px;
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+}
+
+/* Lamp Base */
+.lamp-base {
+  width: 60px;
+  height: 12px;
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+}
+
+/* Auth Title */
+.auth-title {
+  font-weight: 700;
+  font-size: 1.75rem;
+  background: linear-gradient(135deg, #ffcc70, #ff9a56);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShine 3s ease-in-out infinite;
+}
+
+@keyframes titleShine {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+/* Auth Input Fields */
+.auth-input {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 204, 112, 0.2);
+  color: #fff;
+  padding: 14px 24px;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  height: 50px;
+}
+
+.auth-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #ffcc70;
+  box-shadow:
+    0 0 20px rgba(255, 204, 112, 0.3),
+    inset 0 0 10px rgba(255, 204, 112, 0.1);
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.auth-input:hover {
+  border-color: rgba(255, 204, 112, 0.4);
+}
+
+/* Auth Button */
+.auth-button {
+  background: linear-gradient(135deg, #ffcc70 0%, #ff9a56 100%);
+  border: none;
+  color: #1a1a2e;
+  padding: 14px;
+  font-size: 1.1rem;
+  height: 52px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(255, 204, 112, 0.4);
+}
+
+.auth-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.6s,
+    height 0.6s;
+}
+
+.auth-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.auth-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 204, 112, 0.6);
+  background: linear-gradient(135deg, #ffd78a 0%, #ffb070 100%);
+}
+
+.auth-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 204, 112, 0.4);
+}
+
+/* Auth Link */
+.auth-link {
+  color: #ffcc70;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.auth-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: #ffcc70;
+  transition: width 0.3s ease;
+}
+
+.auth-link:hover {
+  color: #ffd78a;
+  transform: translateX(3px);
+}
+
+.auth-link:hover::after {
+  width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .auth-card {
+    max-width: 85%;
+    min-height: 550px;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-card {
+    max-width: 95%;
+    min-height: auto;
+    padding: 1.5rem !important;
+  }
+
+  .lamp-light {
+    width: 180px;
+    height: 180px;
+  }
+
+  .lamp-head {
+    width: 85px;
+    height: 55px;
+  }
+
+  .auth-title {
+    font-size: 1.4rem;
+  }
+
+  .auth-input {
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    height: 48px;
+  }
+
+  .auth-button {
+    padding: 12px;
+    font-size: 1rem;
+    height: 48px;
+  }
+
+  .role-selector-btn {
+    min-width: 100px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Loading Animation for Button */
+.auth-button.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.auth-button.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #1a1a2e;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: buttonSpin 0.6s linear infinite;
+}
+
+@keyframes buttonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Role Selector Buttons */
+.role-selector-btn {
+  min-width: 120px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 2px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-selector-btn.btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  border-color: #4f46e5 !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+.role-selector-btn.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+}
+
+.role-selector-btn.btn-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-color: #dc2626 !important;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
+.role-selector-btn.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
+}
+
+.role-selector-btn.btn-outline-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.role-selector-btn.btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+/* Auth Tabs - Sign In / Sign Up */
+.auth-tabs {
+  max-width: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  padding: 4px;
+  position: relative;
+}
+
+.auth-tab-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  letter-spacing: 0.5px;
+}
+
+.auth-tab-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.auth-tab-btn.active {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}

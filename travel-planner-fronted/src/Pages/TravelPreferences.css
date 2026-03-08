@@ -1,0 +1,395 @@
+/* Travel Preferences / My Trips Page */
+
+.travel-preferences {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem 0;
+}
+
+.travel-preferences .container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.travel-preferences h1 {
+  color: #333;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Trip Cards */
+.trip-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.trip-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.trip-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trip-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.trip-info {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.trip-info p {
+  margin: 0.7rem 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.trip-info strong {
+  color: #333;
+}
+
+.trip-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.trip-actions .btn {
+  flex: 1;
+  min-width: 70px;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trip-actions .btn:hover {
+  transform: scale(1.05);
+}
+
+.trip-actions .btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.trip-actions .btn-info:hover {
+  background-color: #138496;
+}
+
+.trip-actions .btn-warning {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.trip-actions .btn-warning:hover {
+  background-color: #e0a800;
+}
+
+.trip-actions .btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.trip-actions .btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Status Badges */
+.status-planned {
+  background-color: #28a745;
+}
+
+.status-in-progress {
+  background-color: #ffc107;
+  color: #333 !important;
+}
+
+.status-completed {
+  background-color: #6c757d;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 15px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+  position: relative;
+  z-index: 1001;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.2);
+}
+
+.modal-body {
+  padding: 2rem;
+  background: white;
+}
+
+.detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.detail-section h6 {
+  color: #667eea;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  border-bottom: 3px solid #667eea;
+  padding-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.detail-section p {
+  color: #222;
+  margin: 0.7rem 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.detail-section strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.detail-section ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.7rem 0;
+}
+
+.detail-section li {
+  padding: 0.6rem 0;
+  padding-left: 1.8rem;
+  position: relative;
+  color: #222;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.detail-section li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-footer .btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.modal-footer .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-footer .btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.modal-footer .btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-footer .btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.modal-footer .btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-footer .btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Form Styles in Modal */
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .travel-preferences .container {
+    padding: 1rem !important;
+  }
+
+  .trip-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .trip-title {
+    flex: 1;
+  }
+
+  .trip-actions {
+    flex-direction: column;
+  }
+
+  .trip-actions .btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+    border-radius: 10px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* Alert Styles */
+.alert {
+  border-radius: 10px;
+  border: none;
+  padding: 1rem 1.5rem;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Badge Styles */
+.badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+}

@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import "tailwindcss";
+* {
+  font-family: "Outfit", sans-serif;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html[data-theme="light"] body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html[data-theme="dark"] body {
+  background-color: #0b1120;
+  color: #e2e8f0;
+}
+
+body {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.header-surface {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.header-surface.is-scrolled {
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+.header-surface .navbar-brand,
+.header-surface .nav-link {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.header-surface .nav-link:hover {
+  color: #1d4ed8;
+}
+
+.header-surface .nav-link.active {
+  color: #1d4ed8;
+}
+
+.header-surface.is-dark {
+  background: rgba(17, 24, 39, 0.9);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.header-surface.is-dark .navbar-brand,
+.header-surface.is-dark .nav-link {
+  color: #e5e7eb;
+}
+
+.header-surface.is-dark .nav-link:hover,
+.header-surface.is-dark .nav-link.active {
+  color: #93c5fd;
+}
+
+.header-collapse {
+  display: none;
+}
+
+.header-collapse.show {
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .header-collapse {
+    display: flex;
+  }
+}
+@theme {
+  --color-primary: #4fbf8b;
+  --color-primary-dull: #44ae7c;
+}
+
+/* Scroll indicator animation */
+@keyframes scroll {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 1.5s ease-in-out infinite;
+}
