@@ -411,7 +411,13 @@ function Explore() {
       />
 
       {/* Header */}
-      <div style={{ padding: "40px 48px 0", maxWidth: 1400, margin: "0 auto" }}>
+      <div
+        style={{
+          padding: "40px clamp(16px, 4vw, 48px) 0",
+          maxWidth: 1400,
+          margin: "0 auto",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -494,7 +500,7 @@ function Explore() {
             background: "rgba(255,255,255,0.02)",
             border: "1px solid rgba(255,255,255,0.08)",
             borderRadius: 24,
-            padding: "28px 32px",
+            padding: "28px clamp(16px, 3vw, 32px)",
             marginBottom: 28,
           }}
         >
@@ -507,7 +513,7 @@ function Explore() {
               flexWrap: "wrap",
             }}
           >
-            <div style={{ position: "relative", flex: 1, minWidth: 220 }}>
+            <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
               <span
                 style={{
                   position: "absolute",
@@ -731,8 +737,8 @@ function Explore() {
               style={{ height: 500 }}
             >
               <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                attribution='© <a href="https://carto.com/">CARTO</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution="&copy; OpenStreetMap contributors"
               />
               <Marker position={[location.lat, location.lng]}>
                 <Popup>

@@ -223,6 +223,22 @@ const Chatbot = () => {
                     height: min(70vh, 520px);
                   }
                 }
+
+                @media (max-width: 380px) {
+                  .chat-button {
+                    width: 52px;
+                    height: 52px;
+                    bottom: 12px;
+                    right: 12px;
+                  }
+
+                  .chat-window {
+                    left: 8px;
+                    right: 8px;
+                    bottom: 72px;
+                    height: min(66vh, 500px);
+                  }
+                }
         
         .chat-button:hover {
           animation: glow 1.5s ease-in-out infinite, float 2s ease-in-out infinite;
@@ -666,7 +682,7 @@ const Chatbot = () => {
                   className="link-button"
                   style={{
                     flex: "1 1 auto",
-                    minWidth: "120px",
+                    minWidth: "96px",
                     padding: "10px 16px",
                     fontSize: 13,
                     borderRadius: 12,

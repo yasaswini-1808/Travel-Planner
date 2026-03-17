@@ -3,9 +3,20 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "../assets/styles/glass.css";
 
-const API_KEY = "6abb9aa1655ba2c0ed8f6106051281df";
-const WEATHER_URL =
-  "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+const WEATHER_TILE_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "";
+
+const formatWeatherCondition = (weather) => {
+  const description = weather?.weather?.[0]?.description;
+  const fallback = weather?.weather?.[0]?.main || "Unknown";
+  return description
+    ? description.replace(/\b\w/g, (letter) => letter.toUpperCase())
+    : fallback;
+};
+
+const formatWindSpeed = (speed) => {
+  if (typeof speed !== "number") return "N/A";
+  return `${Math.round(speed * 3.6)} km/h`;
+};
 
 export default function WeatherApp() {
   const [city, setCity] = useState("");
@@ -53,11 +64,13 @@ export default function WeatherApp() {
   const checkWeather = async (query) => {
     if (!query) return;
     try {
-      const res = await fetch(`${WEATHER_URL}${query}&appid=${API_KEY}`);
+      const res = await fetch(`/api/weather?city=${encodeURIComponent(query)}`);
       const result = await res.json();
 
-      if (res.status === 404) {
-        setError("City not found. Try selecting from suggestions.");
+      if (!res.ok) {
+        setError(
+          result?.error || "City not found. Try selecting from suggestions.",
+        );
         setData(null);
         setEvents([]);
         return;
@@ -84,16 +97,24 @@ export default function WeatherApp() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`,
-        )
-          .then((res) => res.json())
+        fetch(`/api/weather/current?lat=${latitude}&lon=${longitude}`)
+          .then(async (res) => {
+            const result = await res.json();
+            if (!res.ok) {
+              throw new Error(result?.error || "Failed to fetch weather");
+            }
+            return result;
+          })
           .then((result) => {
+            if (result?.error) {
+              setError(result.error);
+              return;
+            }
             setData(result);
             setError("");
             fetchEvents(result.name);
           })
-          .catch(() => setError("Failed to fetch weather"));
+          .catch((err) => setError(err?.message || "Failed to fetch weather"));
       },
       () => setError("Permission denied"),
     );
@@ -104,7 +125,11 @@ export default function WeatherApp() {
   const fetchEvents = async (cityName) => {
     if (!cityName) return;
     try {
-      const token = import.meta.env.REACT_APP_EVENTBRITE_TOKEN;
+      const token = import.meta.env.VITE_EVENTBRITE_TOKEN;
+      if (!token) {
+        setEvents([]);
+        return;
+      }
       const res = await fetch(
         `https://www.eventbriteapi.com/v3/events/search/?location.address=${cityName}&sort_by=date`,
         {
@@ -229,6 +254,9 @@ export default function WeatherApp() {
               {Math.round(data?.main?.temp)}°C
             </h1>
             <h2 className="text-2xl font-semibold">{data?.name}</h2>
+            <p className="text-sm opacity-80 mt-1">
+              {formatWeatherCondition(data)}
+            </p>
 
             <div className="details flex flex-col sm:flex-row justify-around mt-4 w-full gap-4">
               <div className="col flex items-center space-x-2">
@@ -242,7 +270,9 @@ export default function WeatherApp() {
               <div className="col flex items-center space-x-2">
                 <img src="/Weather/wind.png" className="w-6 h-6" />
                 <div>
-                  <p className="font-bold">{data?.wind?.speed} km/hr</p>
+                  <p className="font-bold">
+                    {formatWindSpeed(data?.wind?.speed)}
+                  </p>
                   <p className="text-sm">Wind Speed</p>
                 </div>
               </div>
@@ -267,45 +297,52 @@ export default function WeatherApp() {
         </div>
       )}
 
-      {/* Map */}
-      <div className="w-full max-w-5xl h-60 sm:h-[60vh] rounded-xl overflow-hidden shadow-lg mb-4">
-        <MapContainer
-          center={data?.coord ? [data.coord.lat, data.coord.lon] : [20, 0]}
-          zoom={data?.coord ? 12 : 2}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution="&copy; OpenStreetMap contributors"
-          />
-          <TileLayer
-            url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
-            opacity={0.5}
-          />
-          <TileLayer
-            url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
-            opacity={0.3}
-          />
+      {/* Map — only shown after a city is searched */}
+      {data && (
+        <div className="w-full max-w-5xl h-60 sm:h-[60vh] rounded-xl overflow-hidden shadow-lg mb-4">
+          <MapContainer
+            center={data?.coord ? [data.coord.lat, data.coord.lon] : [20, 0]}
+            zoom={data?.coord ? 12 : 2}
+            style={{ height: "100%", width: "100%" }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+            {WEATHER_TILE_KEY && (
+              <TileLayer
+                url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${WEATHER_TILE_KEY}`}
+                opacity={0.5}
+              />
+            )}
+            {WEATHER_TILE_KEY && (
+              <TileLayer
+                url={`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${WEATHER_TILE_KEY}`}
+                opacity={0.3}
+              />
+            )}
 
-          {/* Weather Marker */}
-          {data?.coord && (
-            <Marker position={[data.coord.lat, data.coord.lon]}>
-              <Popup>
-                <strong>{data.name}</strong>
-                <br />
-                {Math.round(data.main?.temp)}°C, {data.weather?.[0]?.main}
-              </Popup>
-            </Marker>
-          )}
+            {/* Weather Marker */}
+            {data?.coord && (
+              <Marker position={[data.coord.lat, data.coord.lon]}>
+                <Popup>
+                  <strong>{data.name}</strong>
+                  <br />
+                  {Math.round(data.main?.temp)}°C,{" "}
+                  {formatWeatherCondition(data)}
+                </Popup>
+              </Marker>
+            )}
 
-          {/* Transport Markers */}
-          {transport.map((t, idx) => (
-            <Marker key={idx} position={[t.lat, t.lng]}>
-              <Popup>{t.name}</Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
+            {/* Transport Markers */}
+            {transport.map((t, idx) => (
+              <Marker key={idx} position={[t.lat, t.lng]}>
+                <Popup>{t.name}</Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        </div>
+      )}
 
       {/* Animations */}
       <style>

@@ -34,7 +34,7 @@ const Landing = () => {
     {
       icon: "🗺️",
       bg: "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&q=80",
-      gradient: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+      gradient: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
       title: "AI-Powered Planning",
       description:
         "Smart itinerary generation with personalized recommendations based on your preferences and travel style",
@@ -42,7 +42,7 @@ const Landing = () => {
     {
       icon: "🌤️",
       bg: "https://images.unsplash.com/photo-1504608524841-42584120d693?w=600&q=80",
-      gradient: "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+      gradient: "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
       title: "Real-Time Weather",
       description:
         "Live weather updates and forecasts to help you plan the perfect trip with accurate climate information",
@@ -58,7 +58,7 @@ const Landing = () => {
     {
       icon: "📋",
       bg: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
-      gradient: "linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)",
+      gradient: "linear-gradient(135deg, #f59e0b 0%, #ec4899 100%)",
       title: "Custom Itineraries",
       description:
         "Create, save, and manage personalized travel plans with detailed day-by-day schedules and activities",
@@ -76,7 +76,7 @@ const Landing = () => {
       setActiveSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroSlides.length]);
 
   return (
     <>
@@ -87,8 +87,8 @@ const Landing = () => {
 
         body {
           font-family: 'DM Sans', sans-serif;
-          background: #0a0a0a;
-          color: #f5f0e8;
+          background: #06070f;
+          color: #eef2ff;
           overflow-x: hidden;
         }
 
@@ -164,7 +164,7 @@ const Landing = () => {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #10b981;
+          background: #a5b4fc;
           animation: pulse 2s ease infinite;
         }
 
@@ -186,7 +186,7 @@ const Landing = () => {
 
         .hero-title em {
           font-style: italic;
-          color: #fbbf24;
+          color: #c4b5fd;
         }
 
         .hero-subtitle {
@@ -211,8 +211,8 @@ const Landing = () => {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: #fbbf24;
-          color: #0a0a0a;
+          background: linear-gradient(135deg, #6366f1, #ec4899);
+          color: #f8faff;
           font-family: 'DM Sans', sans-serif;
           font-size: 14px;
           font-weight: 500;
@@ -222,13 +222,13 @@ const Landing = () => {
           border: none;
           cursor: pointer;
           transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-          box-shadow: 0 0 0 0 rgba(251,191,36,0.4);
+          box-shadow: 0 0 0 0 rgba(99,102,241,0.45);
         }
 
         .btn-primary:hover {
           transform: translateY(-3px);
-          background: #f59e0b;
-          box-shadow: 0 8px 30px rgba(251,191,36,0.45);
+          background: linear-gradient(135deg, #4f46e5, #db2777);
+          box-shadow: 0 8px 30px rgba(99,102,241,0.55);
         }
 
         .btn-ghost {

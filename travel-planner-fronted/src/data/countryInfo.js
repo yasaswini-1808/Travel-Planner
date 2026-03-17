@@ -1,14 +1,23 @@
 // Dynamic country information fetched from Wikipedia and Unsplash APIs
 // Solves hardcoding issue - all 195+ countries get fresh, real data automatically
+import { getDestinationImages } from "../api/unsplash";
 
 const countryCache = new Map();
 const imageCache = new Map();
+const profileCache = new Map();
+const spotImageCache = new Map();
+const wikiExtractCache = new Map();
+const wikiAttractionsCache = new Map();
 
 // Wikipedia API endpoint
 const WIKI_API = "https://en.wikipedia.org/api/rest_v1";
 
-// Unsplash API configuration
-const UNSPLASH_ACCESS_KEY = "DhFD7MH6o9pPjSVqOdwFYVXwqJvYZw4iW2i1nJrUmXo";
+const FALLBACK_GALLERY = [
+  "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&auto=format&fit=crop",
+];
 
 // Pre-curated famous tourist spots for major countries
 export const touristSpotsDatabase = {
@@ -344,6 +353,7 @@ async function fetchWikipediaData(countryName) {
         data.content_urls?.desktop?.page ||
         `https://en.wikipedia.org/wiki/${countryName}`,
       image: data.originalimage?.source || null,
+      title: data.title || countryName,
     };
 
     countryCache.set(countryName, countryData);
@@ -357,13 +367,298 @@ async function fetchWikipediaData(countryName) {
       description: `Explore the unique attractions and culture of ${countryName}`,
       wikiLink: `https://en.wikipedia.org/wiki/${countryName}`,
       image: null,
+      title: countryName,
+    };
+  }
+}
+
+async function fetchWikipediaExtract(pageTitle) {
+  const cacheKey = String(pageTitle || "").toLowerCase();
+  if (wikiExtractCache.has(cacheKey)) {
+    return wikiExtractCache.get(cacheKey);
+  }
+
+  try {
+    const response = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&origin=*&titles=${encodeURIComponent(pageTitle)}`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`Wikipedia extract error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const pages = data?.query?.pages || {};
+    const firstPage = Object.values(pages)[0] || {};
+    const extract = String(firstPage?.extract || "").trim();
+
+    wikiExtractCache.set(cacheKey, extract);
+    return extract;
+  } catch (error) {
+    console.warn(
+      `Wikipedia extract unavailable for ${pageTitle}:`,
+      error.message,
+    );
+    wikiExtractCache.set(cacheKey, "");
+    return "";
+  }
+}
+
+function sentencesFromText(text) {
+  if (!text) return [];
+  return text
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 40);
+}
+
+function topSentencesByKeywords(sentences, keywords, limit = 2) {
+  const scoreSentence = (s) => {
+    const lower = s.toLowerCase();
+    return keywords.reduce(
+      (score, keyword) => score + (lower.includes(keyword) ? 1 : 0),
+      0,
+    );
+  };
+
+  const ranked = sentences
+    .map((sentence) => ({ sentence, score: scoreSentence(sentence) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((item) => item.sentence);
+
+  return ranked;
+}
+
+function pickCuisineKeywords(text) {
+  if (!text) return [];
+
+  const candidates = [
+    "cuisine",
+    "food",
+    "dish",
+    "dishes",
+    "meal",
+    "meals",
+    "bread",
+    "rice",
+    "noodle",
+    "spice",
+    "soup",
+    "tea",
+    "coffee",
+  ];
+
+  const lines = text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const hits = lines
+    .filter((line) =>
+      candidates.some((word) => line.toLowerCase().includes(word)),
+    )
+    .slice(0, 5)
+    .map((line) => line.replace(/\[[^\]]+\]/g, ""));
+
+  return hits;
+}
+
+function buildWikipediaInsights(countryName, summaryText, extractText) {
+  const allText = [summaryText, extractText].filter(Boolean).join(" ");
+  const sentences = sentencesFromText(allText);
+
+  const climateSentences = topSentencesByKeywords(
+    sentences,
+    ["climate", "temperature", "rainfall", "season", "weather"],
+    2,
+  );
+
+  const cultureSentences = topSentencesByKeywords(
+    sentences,
+    ["culture", "tradition", "festival", "religion", "language", "art"],
+    2,
+  );
+
+  const transportSentences = topSentencesByKeywords(
+    sentences,
+    ["transport", "rail", "airport", "road", "metro", "bus"],
+    2,
+  );
+
+  const staySentences = topSentencesByKeywords(
+    sentences,
+    ["tourism", "hotel", "resort", "hostel", "accommodation", "visitor"],
+    2,
+  );
+
+  const cuisineLines = pickCuisineKeywords(extractText || summaryText);
+
+  const highlights = [
+    ...topSentencesByKeywords(
+      sentences,
+      ["largest", "famous", "known", "heritage", "capital", "major"],
+      4,
+    ),
+  ].slice(0, 4);
+
+  return {
+    bestTime:
+      climateSentences[0] ||
+      `Weather patterns vary across ${countryName}; check seasonal forecasts before travel.`,
+    climate:
+      climateSentences.join(" ") ||
+      `Climate details for ${countryName} are available in its Wikipedia profile.`,
+    culture:
+      cultureSentences.join(" ") ||
+      `${countryName} has a rich cultural heritage documented on Wikipedia.`,
+    transportation:
+      transportSentences.join(" ") ||
+      `Transportation options in ${countryName} include domestic and local transit systems.`,
+    accommodation: staySentences.length
+      ? staySentences
+      : [
+          `Accommodation options in ${countryName} range from budget stays to premium hotels.`,
+        ],
+    cuisine: cuisineLines.length
+      ? cuisineLines
+      : [
+          `Traditional food and regional dishes in ${countryName} are highlighted in Wikipedia entries.`,
+        ],
+    highlights: highlights.length
+      ? highlights
+      : [
+          `Discover major landmarks and cultural experiences in ${countryName}.`,
+        ],
+  };
+}
+
+async function fetchWikipediaAttractions(countryName) {
+  const cacheKey = String(countryName || "").toLowerCase();
+  if (wikiAttractionsCache.has(cacheKey)) {
+    return wikiAttractionsCache.get(cacheKey);
+  }
+
+  try {
+    const response = await fetch(
+      `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(countryName + " tourist attractions")}&limit=6&namespace=0&format=json&origin=*`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`Wikipedia attractions error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const titles = data?.[1] || [];
+    const descriptions = data?.[2] || [];
+
+    const spots = await Promise.all(
+      titles.slice(0, 6).map(async (title, index) => {
+        const fallback = FALLBACK_GALLERY[index % FALLBACK_GALLERY.length];
+        const image = await fetchSpotImage(countryName, title, fallback);
+
+        return {
+          name: title,
+          location: countryName,
+          bestFor: "History, Culture, Sightseeing",
+          description:
+            descriptions[index] ||
+            `Learn more about ${title} in ${countryName}.`,
+          image,
+        };
+      }),
+    );
+
+    const filtered = spots.filter(
+      (spot) => spot?.name?.toLowerCase() !== countryName.toLowerCase(),
+    );
+
+    wikiAttractionsCache.set(cacheKey, filtered);
+    return filtered;
+  } catch (error) {
+    console.warn(
+      `Wikipedia attractions unavailable for ${countryName}:`,
+      error.message,
+    );
+    wikiAttractionsCache.set(cacheKey, []);
+    return [];
+  }
+}
+
+function formatNumber(value) {
+  if (!value && value !== 0) return "N/A";
+  return Number(value).toLocaleString("en-US");
+}
+
+function formatArea(area) {
+  if (!area) return "N/A";
+  return `${formatNumber(area)} km2`;
+}
+
+function formatPopulation(population) {
+  if (!population) return "N/A";
+  return formatNumber(population);
+}
+
+function parseRestCountry(restCountry) {
+  const currenciesObj = restCountry.currencies || {};
+  const languagesObj = restCountry.languages || {};
+  const currencyList = Object.values(currenciesObj)
+    .map((cur) => cur?.name)
+    .filter(Boolean);
+  const languageList = Object.values(languagesObj).filter(Boolean);
+
+  return {
+    capital: restCountry.capital?.[0] || "N/A",
+    region: restCountry.region || "N/A",
+    population: formatPopulation(restCountry.population),
+    area: formatArea(restCountry.area),
+    timezone: restCountry.timezones?.[0] || "N/A",
+    currency: currencyList.join(", ") || "N/A",
+    language: languageList.join(", ") || "N/A",
+  };
+}
+
+async function fetchCountryProfile(countryName) {
+  if (profileCache.has(countryName)) {
+    return profileCache.get(countryName);
+  }
+
+  try {
+    const response = await fetch(
+      `https://restcountries.com/v3.1/name/${encodeURIComponent(countryName)}?fullText=true`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`REST Countries API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const profile = parseRestCountry(data[0] || {});
+    profileCache.set(countryName, profile);
+    return profile;
+  } catch (error) {
+    console.warn(
+      `Country profile unavailable for ${countryName}:`,
+      error.message,
+    );
+    return {
+      capital: "N/A",
+      region: "N/A",
+      population: "N/A",
+      area: "N/A",
+      timezone: "N/A",
+      currency: "N/A",
+      language: "N/A",
     };
   }
 }
 
 /**
- * Fetch images from Unsplash API
- * Unique images for each country - no more hardcoded duplicates
+ * Fetch images from backend destination image API
+ * Uses provider fallbacks server-side and avoids exposing keys in frontend.
  */
 async function fetchCountryImages(countryName, count = 6) {
   if (imageCache.has(countryName)) {
@@ -371,38 +666,37 @@ async function fetchCountryImages(countryName, count = 6) {
   }
 
   try {
-    const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(countryName)} travel landscape&per_page=${count}&order_by=relevant&client_id=${UNSPLASH_ACCESS_KEY}`,
-    );
+    const images = await getDestinationImages(`${countryName} landmarks`);
 
-    if (!response.ok) {
-      throw new Error(`Unsplash API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    const images = data.results?.map((photo) => photo.urls.regular) || [];
-
-    // If not enough images, add generic travel images
-    while (images.length < 4) {
-      images.push(
-        `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop`,
-      );
+    while (images.length < count) {
+      images.push(FALLBACK_GALLERY[images.length % FALLBACK_GALLERY.length]);
     }
 
     imageCache.set(countryName, images);
-    return images;
+    return images.slice(0, count);
   } catch (error) {
     console.warn(
-      `Unsplash images unavailable for ${countryName}:`,
+      `Country images unavailable for ${countryName}:`,
       error.message,
     );
-    return [
-      `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop`,
-      `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop`,
-      `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop`,
-      `https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop`,
-    ];
+    return FALLBACK_GALLERY.slice(0, count);
+  }
+}
+
+async function fetchSpotImage(countryName, spotName, fallback) {
+  const cacheKey = `${countryName}::${spotName}`;
+  if (spotImageCache.has(cacheKey)) {
+    return spotImageCache.get(cacheKey);
+  }
+
+  try {
+    const images = await getDestinationImages(`${spotName} ${countryName}`);
+    const resolved = images[0] || fallback;
+    spotImageCache.set(cacheKey, resolved);
+    return resolved;
+  } catch (error) {
+    console.warn(`Spot image unavailable for ${spotName}:`, error.message);
+    return fallback;
   }
 }
 
@@ -462,44 +756,59 @@ function getTouristSpots(countryName) {
 export async function getCountryInfo(countryName) {
   try {
     // Fetch real data in parallel for performance
-    const [wikiData, images] = await Promise.all([
+    const [wikiData, images, profile] = await Promise.all([
       fetchWikipediaData(countryName),
       fetchCountryImages(countryName),
+      fetchCountryProfile(countryName),
     ]);
 
-    const touristSpots = getTouristSpots(countryName);
+    const [wikiExtract, wikiAttractions] = await Promise.all([
+      fetchWikipediaExtract(wikiData.title || countryName),
+      fetchWikipediaAttractions(countryName),
+    ]);
 
-    // Enrich tourist spots with unique images
-    const enrichedSpots = touristSpots.slice(0, 6).map((spot, index) => ({
-      ...spot,
-      image: images[index % images.length],
-    }));
+    const insights = buildWikipediaInsights(
+      countryName,
+      wikiData.description,
+      wikiExtract,
+    );
+
+    const touristSpots = wikiAttractions.length
+      ? wikiAttractions
+      : getTouristSpots(countryName);
+
+    const enrichedSpots = await Promise.all(
+      touristSpots.slice(0, 6).map(async (spot, index) => {
+        const fallback =
+          images[(index + 1) % images.length] || FALLBACK_GALLERY[0];
+        const spotImage = await fetchSpotImage(
+          countryName,
+          spot.name,
+          fallback,
+        );
+        return {
+          ...spot,
+          image: spotImage,
+        };
+      }),
+    );
 
     return {
       country: countryName,
+      ...profile,
       description:
         wikiData.description || `Experience the wonders of ${countryName}`,
-      image:
-        images[0] ||
-        "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop",
-      currency: "Local Currency",
-      language: "Local Language",
-      bestTime: "Check local climate",
-      climate: "Varies by season",
-      cuisine: ["Local Specialties", "Traditional Dishes"],
-      culture: "Rich cultural heritage and traditions",
-      accommodation: ["Hotels", "Hostels", "Guesthouses", "Resorts"],
-      transportation: "Public & Private Options",
-      budgetRange: "Varies",
+      image: images[0] || FALLBACK_GALLERY[0],
+      bestTime: insights.bestTime,
+      climate: insights.climate,
+      cuisine: insights.cuisine,
+      culture: insights.culture,
+      accommodation: insights.accommodation,
+      transportation: insights.transportation,
+      budgetRange: `Costs vary by city and season in ${countryName}`,
       galleryImages: images.slice(0, 4),
       touristSpots: enrichedSpots,
-      highlights: [
-        "Authentic cultural experiences",
-        "Historical landmarks",
-        "Natural attractions",
-        "Local cuisine specialties",
-        "Warm hospitality",
-      ],
+      highlights: insights.highlights,
       wikiLink: wikiData.wikiLink,
     };
   } catch (error) {
@@ -507,11 +816,15 @@ export async function getCountryInfo(countryName) {
     // Graceful fallback
     return {
       country: countryName,
+      capital: "N/A",
+      region: "N/A",
+      population: "N/A",
+      area: "N/A",
+      timezone: "N/A",
       description: `Discover ${countryName} with its unique attractions and culture.`,
-      image:
-        "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&auto=format&fit=crop",
-      currency: "Local Currency",
-      language: "Local Language",
+      image: FALLBACK_GALLERY[0],
+      currency: "N/A",
+      language: "N/A",
       bestTime: "Check local climate",
       climate: "Varies",
       cuisine: ["Local cuisine"],
@@ -519,10 +832,7 @@ export async function getCountryInfo(countryName) {
       accommodation: ["Hotels", "Hostels"],
       transportation: "Available",
       budgetRange: "Varies",
-      galleryImages: [
-        "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&auto=format&fit=crop",
-      ],
+      galleryImages: FALLBACK_GALLERY,
       touristSpots: getTouristSpots(countryName),
       highlights: ["Explore this destination"],
       wikiLink: `https://en.wikipedia.org/wiki/${countryName}`,

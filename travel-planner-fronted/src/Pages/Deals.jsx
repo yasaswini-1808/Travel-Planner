@@ -271,7 +271,7 @@ export default function Deals() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#0a0a0a",
+        background: "#06070f",
         color: "#f0ece4",
         fontFamily: "'DM Sans', sans-serif",
       }}
@@ -289,7 +289,7 @@ export default function Deals() {
           transition: border-color 0.3s ease, transform 0.3s ease;
           cursor: pointer;
         }
-        .deal-card:hover { border-color: #c9a96e; transform: translateY(-4px); }
+        .deal-card:hover { border-color: #6366f1; transform: translateY(-4px); }
 
         .deal-img {
           width: 100%; height: 220px; object-fit: cover;
@@ -305,8 +305,8 @@ export default function Deals() {
           color: #666; padding: 8px 0; border-bottom: 1px solid transparent;
           transition: color 0.2s, border-color 0.2s;
         }
-        .cat-btn:hover { color: #c9a96e; }
-        .cat-btn.active { color: #c9a96e; border-bottom-color: #c9a96e; }
+        .cat-btn:hover { color: #6366f1; }
+        .cat-btn.active { color: #6366f1; border-bottom-color: #6366f1; }
 
         .search-input, .filter-select {
           background: #111; border: 1px solid #2a2a2a; color: #f0ece4;
@@ -315,17 +315,17 @@ export default function Deals() {
           transition: border-color 0.2s;
         }
         .search-input::placeholder { color: #444; }
-        .search-input:focus, .filter-select:focus { border-color: #c9a96e; }
+        .search-input:focus, .filter-select:focus { border-color: #6366f1; }
         .filter-select option { background: #111; }
 
         .book-btn {
-          background: #c9a96e; color: #0a0a0a; border: none;
+          background: #6366f1; color: #06070f; border: none;
           font-family: 'DM Sans', sans-serif; font-size: 11px;
           font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
           padding: 12px 24px; cursor: pointer; width: 100%;
           transition: background 0.2s, transform 0.1s;
         }
-        .book-btn:hover { background: #e0c08a; transform: scale(1.01); }
+        .book-btn:hover { background: #c7d2fe; transform: scale(1.01); }
 
         .weather-btn {
           background: none; border: 1px solid #2a2a2a; color: #888;
@@ -334,7 +334,7 @@ export default function Deals() {
           padding: 9px; width: 100%; cursor: pointer;
           transition: border-color 0.2s, color 0.2s;
         }
-        .weather-btn:hover, .weather-btn.active { border-color: #4a9eff; color: #4a9eff; }
+        .weather-btn:hover, .weather-btn.active { border-color: #7dd3fc; color: #7dd3fc; }
 
         .weather-box {
           background: #0d1520; border: 1px solid #1a2d45;
@@ -357,7 +357,7 @@ export default function Deals() {
 
         .discount-badge {
           position: absolute; top: 14px; right: 14px;
-          background: #c9a96e; color: #0a0a0a;
+          background: #6366f1; color: #06070f;
           font-size: 11px; font-weight: 700; font-family: 'DM Sans', sans-serif;
           padding: 5px 10px;
         }
@@ -370,11 +370,47 @@ export default function Deals() {
         }
 
         .star-bar { display: flex; gap: 2px; }
-        .star { color: #c9a96e; font-size: 12px; }
+        .star { color: #6366f1; font-size: 12px; }
         .star.empty { color: #2a2a2a; }
 
+        .deals-category-nav {
+          display: flex;
+          gap: 32px;
+          margin-bottom: 32px;
+          border-bottom: 1px solid #1a1a1a;
+          padding-bottom: 0;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+        .deals-category-nav::-webkit-scrollbar { display: none; }
+
+        .deals-controls-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 12px;
+          align-items: center;
+        }
+
+        .deals-count {
+          font-size: 11px;
+          color: #444;
+          letter-spacing: 1px;
+          white-space: nowrap;
+          justify-self: end;
+        }
+
+        @media (max-width: 768px) {
+          .deals-controls-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .deals-count {
+            justify-self: start;
+          }
+        }
+
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-track { background: #06070f; }
         ::-webkit-scrollbar-thumb { background: #2a2a2a; }
       `}</style>
 
@@ -382,7 +418,7 @@ export default function Deals() {
       <div
         style={{
           borderBottom: "1px solid #1a1a1a",
-          padding: "14px 48px",
+          padding: "14px clamp(16px, 4vw, 48px)",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -402,7 +438,7 @@ export default function Deals() {
           style={{
             fontSize: "11px",
             letterSpacing: "2px",
-            color: "#c9a96e",
+            color: "#6366f1",
             textTransform: "uppercase",
           }}
         >
@@ -413,7 +449,7 @@ export default function Deals() {
       {/* Hero */}
       <div
         style={{
-          padding: "80px 48px 60px",
+          padding: "80px clamp(16px, 4vw, 48px) 60px",
           maxWidth: "1400px",
           margin: "0 auto",
         }}
@@ -450,7 +486,7 @@ export default function Deals() {
             >
               Travel
               <br />
-              <em style={{ color: "#c9a96e" }}>Deals</em>
+              <em style={{ color: "#6366f1" }}>Deals</em>
             </h1>
           </div>
           <p
@@ -470,18 +506,14 @@ export default function Deals() {
 
       {/* Controls */}
       <div
-        style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 48px 40px" }}
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "0 clamp(16px, 4vw, 48px) 40px",
+        }}
       >
         {/* Category nav */}
-        <div
-          style={{
-            display: "flex",
-            gap: "32px",
-            marginBottom: "32px",
-            borderBottom: "1px solid #1a1a1a",
-            paddingBottom: "0",
-          }}
-        >
+        <div className="deals-category-nav">
           {categories.map((cat) => (
             <button
               key={cat.id}
@@ -494,14 +526,7 @@ export default function Deals() {
         </div>
 
         {/* Search + Filters */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr auto auto auto",
-            gap: "12px",
-            alignItems: "center",
-          }}
-        >
+        <div className="deals-controls-grid">
           <input
             className="search-input"
             type="text"
@@ -530,14 +555,7 @@ export default function Deals() {
             <option value="rating">Top Rated</option>
             <option value="discount">Best Discount</option>
           </select>
-          <div
-            style={{
-              fontSize: "11px",
-              color: "#444",
-              letterSpacing: "1px",
-              whiteSpace: "nowrap",
-            }}
-          >
+          <div className="deals-count">
             {filteredDeals.length}{" "}
             {filteredDeals.length === 1 ? "deal" : "deals"}
           </div>
@@ -546,7 +564,11 @@ export default function Deals() {
 
       {/* Deals Grid */}
       <div
-        style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 48px 80px" }}
+        style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
+          padding: "0 clamp(16px, 4vw, 48px) 80px",
+        }}
       >
         {filteredDeals.length === 0 ? (
           <div
@@ -576,7 +598,7 @@ export default function Deals() {
               <div
                 key={deal.id}
                 className="deal-card"
-                style={{ background: "#0a0a0a" }}
+                style={{ background: "#06070f" }}
               >
                 {/* Image */}
                 <div
@@ -619,7 +641,7 @@ export default function Deals() {
                       style={{
                         fontSize: "10px",
                         letterSpacing: "2px",
-                        color: "#c9a96e",
+                        color: "#6366f1",
                         textTransform: "uppercase",
                       }}
                     >
@@ -803,7 +825,7 @@ export default function Deals() {
       <div
         style={{
           borderTop: "1px solid #1a1a1a",
-          padding: "24px 48px",
+          padding: "24px clamp(16px, 4vw, 48px)",
           display: "flex",
           justifyContent: "center",
         }}
@@ -822,3 +844,5 @@ export default function Deals() {
     </div>
   );
 }
+
+

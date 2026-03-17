@@ -20,7 +20,11 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from "../middleware/validate.js";
-import { sendPasswordResetEmail } from "../services/emailService.js";
+import {
+  sendPasswordResetEmail,
+  sendLoginNotificationEmail,
+  sendWelcomeRegistrationEmail,
+} from "../services/emailService.js";
 
 const router = express.Router();
 
@@ -99,6 +103,14 @@ router.post(
       });
 
       await session.save();
+
+      // Send registration email (non-blocking)
+      sendWelcomeRegistrationEmail({
+        to: user.email,
+        username: user.username,
+      }).catch((err) =>
+        console.error("Registration welcome email failed:", err),
+      );
 
       res.status(201).json({
         message: "Registration successful",
@@ -197,6 +209,18 @@ router.post(
       });
 
       await session.save();
+
+      // Send login notification email (non-blocking)
+      const clientIp =
+        req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+        req.socket?.remoteAddress ||
+        "Unknown";
+      sendLoginNotificationEmail({
+        to: user.email,
+        username: user.username,
+        loginTime: new Date(),
+        ipAddress: clientIp,
+      }).catch((err) => console.error("Login notification email failed:", err));
 
       res.json({
         message: "Login successful",

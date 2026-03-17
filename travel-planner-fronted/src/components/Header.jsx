@@ -127,7 +127,6 @@ export default function Header() {
           box-shadow: 0 4px 40px rgba(0,0,0,0.5);
           border-bottom-color: rgba(255,255,255,0.1);
         }
-
         /* Brand */
         .hdr-brand {
           display: flex; align-items: center; gap: 10px;
@@ -136,17 +135,17 @@ export default function Header() {
         }
         .hdr-brand-icon {
           width: 34px; height: 34px; border-radius: 10px;
-          background: linear-gradient(135deg, #6366F1, #06B6D4);
+          background: linear-gradient(135deg, #6366F1, #EC4899);
           display: flex; align-items: center; justify-content: center;
           font-size: 16px;
-          box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+          box-shadow: 0 4px 16px rgba(99,102,241,0.45);
         }
         .hdr-brand-text {
           font-size: 17px; font-weight: 800; letter-spacing: -0.5px;
           color: #fff;
         }
         .hdr-brand-text span {
-          background: linear-gradient(90deg, #6366F1, #06B6D4);
+          background: linear-gradient(90deg, #7DD3FC, #EC4899);
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
@@ -165,18 +164,17 @@ export default function Header() {
         }
         .hdr-nav-link:hover { color: #fff; background: rgba(255,255,255,0.07); }
         .hdr-nav-link.active {
-          color: #fff; background: rgba(99,102,241,0.15);
-          box-shadow: inset 0 0 0 1px rgba(99,102,241,0.3);
+          color: #fff; background: rgba(99,102,241,0.2);
+          box-shadow: inset 0 0 0 1px rgba(196,181,253,0.4);
         }
         .hdr-nav-link.active .nav-dot {
-          background: #6366F1; box-shadow: 0 0 8px #6366F1;
+          background: #A5B4FC; box-shadow: 0 0 8px #A5B4FC;
         }
         .nav-dot {
           width: 5px; height: 5px; border-radius: 50%;
           background: rgba(255,255,255,0.15);
           transition: background 0.2s, box-shadow 0.2s;
         }
-
         /* Right actions */
         .hdr-actions {
           display: flex; align-items: center; gap: 10px; flex-shrink: 0;
@@ -186,12 +184,12 @@ export default function Header() {
           display: flex; align-items: center; gap: 7px;
           padding: 9px 20px; border-radius: 10px; border: none; cursor: pointer;
           font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
-          background: linear-gradient(135deg, #6366F1, #8B5CF6);
+          background: linear-gradient(135deg, #6366F1, #EC4899);
           color: #fff; letter-spacing: 0.2px;
           transition: all 0.25s ease;
-          box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+          box-shadow: 0 4px 16px rgba(99,102,241,0.45);
         }
-        .btn-plan:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(99,102,241,0.6); }
+        .btn-plan:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(99,102,241,0.65); }
 
         .btn-signin {
           display: flex; align-items: center;
@@ -202,16 +200,15 @@ export default function Header() {
           transition: all 0.2s ease;
         }
         .btn-signin:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
-
         .btn-getstarted {
           display: flex; align-items: center;
           padding: 8px 20px; border-radius: 10px; border: none; cursor: pointer;
           font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
-          background: #fff; color: #0A0A14;
+          background: linear-gradient(135deg, #E0E7FF, #F5D0FE); color: #111827;
           transition: all 0.25s ease;
-          box-shadow: 0 2px 12px rgba(255,255,255,0.15);
+          box-shadow: 0 2px 12px rgba(99,102,241,0.25);
         }
-        .btn-getstarted:hover { background: #e8e4ff; transform: scale(1.03); }
+        .btn-getstarted:hover { background: linear-gradient(135deg, #C7D2FE, #E9D5FF); transform: scale(1.03); }
 
         /* Avatar + dropdown */
         .user-dropdown-wrap { position: relative; }
@@ -239,7 +236,6 @@ export default function Header() {
           transition: transform 0.2s ease;
         }
         .avatar-chevron.open { transform: rotate(180deg); }
-
         /* Dropdown menu */
         .dropdown-menu-custom {
           position: absolute; top: calc(100% + 10px); right: 0;
@@ -273,7 +269,6 @@ export default function Header() {
         .dd-item.danger { color: rgba(239,68,68,0.7); }
         .dd-item.danger:hover { background: rgba(239,68,68,0.1); color: #F87171; }
         .dd-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 4px 0; }
-
         /* Mobile hamburger */
         .hamburger-btn {
           display: none; flex-direction: column; justify-content: center; gap: 5px;
@@ -318,7 +313,7 @@ export default function Header() {
           text-decoration: none; transition: all 0.2s ease;
         }
         .mob-nav-link:hover { color: #fff; background: rgba(255,255,255,0.07); }
-        .mob-nav-link.active { color: #fff; background: rgba(99,102,241,0.15); box-shadow: inset 0 0 0 1px rgba(99,102,241,0.3); }
+        .mob-nav-link.active { color: #fff; background: rgba(99,102,241,0.2); box-shadow: inset 0 0 0 1px rgba(196,181,253,0.4); }
         .mob-nav-icon { font-size: 16px; width: 22px; text-align: center; }
         .mob-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 8px 0; }
         .mob-actions { display: flex; gap: 10px; padding: 4px 0 0; }
@@ -333,10 +328,10 @@ export default function Header() {
         }
         .mob-btn-outline:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .mob-btn-primary {
-          background: linear-gradient(135deg, #6366F1, #8B5CF6); color: #fff;
-          box-shadow: 0 4px 16px rgba(99,102,241,0.4);
+          background: linear-gradient(135deg, #6366F1, #EC4899); color: #fff;
+          box-shadow: 0 4px 16px rgba(99,102,241,0.45);
         }
-        .mob-btn-primary:hover { box-shadow: 0 6px 24px rgba(99,102,241,0.6); }
+        .mob-btn-primary:hover { box-shadow: 0 6px 24px rgba(99,102,241,0.65); }
 
         /* Mobile user section */
         .mob-user-row {
@@ -465,6 +460,12 @@ export default function Header() {
                       </button>
                       <button
                         className="dd-item"
+                        onClick={() => navigate("/budget")}
+                      >
+                        💸 Budget Tracker
+                      </button>
+                      <button
+                        className="dd-item"
                         onClick={() => navigate("/users")}
                       >
                         👥 View Users
@@ -564,6 +565,13 @@ export default function Header() {
                 onClick={() => setMobileOpen(false)}
               >
                 <span className="mob-nav-icon">📝</span> My Plans
+              </NavLink>
+              <NavLink
+                to="/budget"
+                className="mob-nav-link"
+                onClick={() => setMobileOpen(false)}
+              >
+                <span className="mob-nav-icon">💸</span> Budget Tracker
               </NavLink>
               <NavLink
                 to="/users"

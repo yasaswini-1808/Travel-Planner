@@ -6,11 +6,11 @@ const css = `
 
   :root {
     --ink: #0a0a0f;
-    --surface: #111118;
-    --card: #16161f;
+    --surface: #121529;
+    --card: #171b33;
     --border: rgba(255,255,255,0.07);
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
+    --gold: #6366f1;
+    --gold-light: #c4b5fd;
     --text: #e8e4d9;
     --muted: rgba(232,228,217,0.65);
     --accent: #4f7fe8;
@@ -76,7 +76,7 @@ const css = `
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold-light);
-    border: 1px solid rgba(201,168,76,0.5);
+    border: 1px solid rgba(99,102,241,0.5);
     border-radius: 100px;
     padding: 6px 16px;
     margin-bottom: 2rem;
@@ -418,8 +418,8 @@ const css = `
   }
 
   .ab-value-card:hover {
-    border-color: rgba(201,168,76,0.45);
-    background: rgba(201,168,76,0.1);
+    border-color: rgba(99,102,241,0.45);
+    background: rgba(99,102,241,0.1);
     transform: translateY(-4px);
     box-shadow: 0 16px 48px rgba(0,0,0,0.35);
   }
@@ -480,8 +480,8 @@ const css = `
   .btn-gold {
     padding: 14px 34px;
     border-radius: 100px;
-    border: 1px solid rgba(201,168,76,0.55);
-    background: rgba(201,168,76,0.18);
+    border: 1px solid rgba(99,102,241,0.55);
+    background: rgba(99,102,241,0.18);
     backdrop-filter: blur(8px);
     color: var(--gold-light);
     font-family: 'DM Sans', sans-serif;
@@ -492,8 +492,8 @@ const css = `
   }
 
   .btn-gold:hover {
-    background: rgba(201,168,76,0.3);
-    box-shadow: 0 12px 40px rgba(201,168,76,0.28);
+    background: rgba(99,102,241,0.3);
+    box-shadow: 0 12px 40px rgba(99,102,241,0.28);
     transform: translateY(-2px);
   }
 
@@ -764,3 +764,5 @@ export default function About() {
     </div>
   );
 }
+
+

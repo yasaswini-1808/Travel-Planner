@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { getDestinationImages } from "../api/unsplash";
 
 /* ═══════════════════════════════════════════════════════════════
    LUXURY BLACK & GOLD — TRAVEL JOURNAL
@@ -8,19 +9,19 @@ const css = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap');
 
   :root {
-    --black:   #080705;
-    --black2:  #0f0d0a;
+    --black:   #06070f;
+    --black2:  #0b1020;
     --black3:  #161310;
-    --gold:    #c9a84c;
-    --gold2:   #e8c97a;
-    --gold3:   #a07832;
-    --gold-glow: rgba(201,168,76,0.35);
-    --gold-dim:  rgba(201,168,76,0.12);
+    --gold:    #6366f1;
+    --gold2:   #c4b5fd;
+    --gold3:   #ec4899;
+    --gold-glow: rgba(99,102,241,0.35);
+    --gold-dim:  rgba(99,102,241,0.12);
     --cream:   #f5eed8;
     --text:    #e8e0cc;
     --muted:   rgba(232,224,204,0.45);
-    --border:  rgba(201,168,76,0.18);
-    --border-h:rgba(201,168,76,0.55);
+    --border:  rgba(99,102,241,0.18);
+    --border-h:rgba(99,102,241,0.55);
     --card-bg: rgba(15,13,10,0.85);
   }
 
@@ -60,8 +61,8 @@ const css = `
     padding: 6rem 1.5rem 4rem;
     overflow: hidden;
     background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(201,168,76,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(99,102,241,0.04) 0%, transparent 60%),
       var(--black);
   }
 
@@ -93,7 +94,7 @@ const css = `
   .bl-hero-lines span {
     position: absolute; display: block;
     width: 1px; height: 45%;
-    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.15), transparent);
+    background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.15), transparent);
     animation: riseUp 3s ease both;
   }
   .bl-hero-lines span:nth-child(1) { left: 15%; top: 10%; animation-delay: 0.2s; }
@@ -189,7 +190,7 @@ const css = `
     border-radius: 0; /* sharp luxury */
     border: 1px solid var(--border);
     border-left: 3px solid var(--gold3);
-    background: rgba(201,168,76,0.04);
+    background: rgba(99,102,241,0.04);
     color: var(--text); font-family: "Jost", sans-serif;
     font-size: 0.88rem; font-weight: 300; letter-spacing: 0.05em;
     outline: none;
@@ -199,8 +200,8 @@ const css = `
   .bl-search:focus {
     border-color: var(--gold);
     border-left-color: var(--gold);
-    background: rgba(201,168,76,0.07);
-    box-shadow: 0 0 0 1px rgba(201,168,76,0.2), 0 8px 32px rgba(0,0,0,0.4);
+    background: rgba(99,102,241,0.07);
+    box-shadow: 0 0 0 1px rgba(99,102,241,0.2), 0 8px 32px rgba(0,0,0,0.4);
   }
 
   /* SCROLL HINT */
@@ -250,13 +251,13 @@ const css = `
   }
   .bl-cat-btn:hover {
     border-color: var(--gold3); color: var(--gold2);
-    background: rgba(201,168,76,0.06);
+    background: rgba(99,102,241,0.06);
   }
   .bl-cat-btn.active {
     border-color: var(--gold);
-    background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.08));
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(99,102,241,0.08));
     color: var(--gold2);
-    box-shadow: 0 0 20px rgba(201,168,76,0.15), inset 0 1px 0 rgba(201,168,76,0.2);
+    box-shadow: 0 0 20px rgba(99,102,241,0.15), inset 0 1px 0 rgba(99,102,241,0.2);
   }
 
   /* META BAR */
@@ -272,7 +273,7 @@ const css = `
   .bl-count strong { color: var(--gold); font-weight: 500; }
   .bl-sort { display: flex; align-items: center; gap: 10px; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
   .bl-sort select {
-    background: rgba(201,168,76,0.05); border: 1px solid var(--border);
+    background: rgba(99,102,241,0.05); border: 1px solid var(--border);
     color: var(--text); font-family: "Jost", sans-serif; font-size: 0.72rem;
     padding: 7px 12px; outline: none; cursor: pointer; letter-spacing: 0.05em;
   }
@@ -307,10 +308,10 @@ const css = `
   }
   .bl-card::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.06) 0%, transparent 60%);
     opacity: 0; transition: opacity 0.4s;
   }
-  .bl-card:hover { transform: translateY(-8px); border-color: var(--border-h); box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(201,168,76,0.08); }
+  .bl-card:hover { transform: translateY(-8px); border-color: var(--border-h); box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 40px rgba(99,102,241,0.08); }
   .bl-card:hover::before { opacity: 1; }
   .bl-card:hover::after  { opacity: 1; }
 
@@ -347,7 +348,7 @@ const css = `
   .bl-card-img::after {
     content: ""; position: absolute;
     top: -100%; left: 0; right: 0; height: 40%;
-    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.08), transparent);
+    background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.08), transparent);
     transition: none; pointer-events: none;
   }
   .bl-card:hover .bl-card-img::after {
@@ -414,7 +415,7 @@ const css = `
   .bl-card-footer {
     display: flex; align-items: center; justify-content: space-between;
     padding-top: 1rem; margin-top: auto;
-    border-top: 1px solid rgba(201,168,76,0.12);
+    border-top: 1px solid rgba(99,102,241,0.12);
   }
   .bl-card-author { display: flex; align-items: center; gap: 10px; }
   .bl-avatar {
@@ -443,7 +444,7 @@ const css = `
     background: linear-gradient(135deg, var(--gold3), transparent);
     opacity: 0; transition: opacity 0.3s;
   }
-  .bl-read-btn:hover { border-color: var(--gold); color: var(--black); background: var(--gold); box-shadow: 0 4px 24px rgba(201,168,76,0.3); }
+  .bl-read-btn:hover { border-color: var(--gold); color: var(--black); background: var(--gold); box-shadow: 0 4px 24px rgba(99,102,241,0.3); }
   .bl-read-btn:hover::before { opacity: 0; }
   .bl-read-btn span { position: relative; z-index: 1; }
 
@@ -452,9 +453,9 @@ const css = `
     background: var(--card-bg); border: 1px solid var(--border);
     animation: skeletonPulse 2s ease-in-out infinite;
   }
-  .bl-skeleton-img { height: 240px; background: rgba(201,168,76,0.05); }
+  .bl-skeleton-img { height: 240px; background: rgba(99,102,241,0.05); }
   .bl-skeleton-body { padding: 1.6rem; display: flex; flex-direction: column; gap: 12px; }
-  .bl-skeleton-line { height: 10px; background: rgba(201,168,76,0.07); }
+  .bl-skeleton-line { height: 10px; background: rgba(99,102,241,0.07); }
   @keyframes skeletonPulse {
     0%,100% { opacity: 1; } 50% { opacity: 0.5; }
   }
@@ -477,7 +478,7 @@ const css = `
     cursor: pointer; transition: all 0.3s;
     clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
   }
-  .bl-load-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); box-shadow: 0 0 30px rgba(201,168,76,0.1); }
+  .bl-load-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(99,102,241,0.06); box-shadow: 0 0 30px rgba(99,102,241,0.1); }
 
   /* MODAL BACKDROP */
   .bl-modal-backdrop {
@@ -493,7 +494,7 @@ const css = `
     background: var(--black2);
     border: 1px solid var(--border);
     width: 100%; max-width: 820px; margin: auto;
-    box-shadow: 0 60px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.08);
+    box-shadow: 0 60px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,102,241,0.08);
     animation: modalUp 0.4s cubic-bezier(0.22,1,0.36,1);
     position: relative;
   }
@@ -515,12 +516,12 @@ const css = `
 
   .bl-modal-close {
     position: absolute; top: 16px; right: 16px;
-    width: 38px; height: 38px; border: 1px solid rgba(201,168,76,0.3);
+    width: 38px; height: 38px; border: 1px solid rgba(99,102,241,0.3);
     background: rgba(8,7,5,0.8); backdrop-filter: blur(8px);
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     font-size: 1rem; color: var(--gold); transition: all 0.2s;
   }
-  .bl-modal-close:hover { border-color: var(--gold); background: rgba(201,168,76,0.12); }
+  .bl-modal-close:hover { border-color: var(--gold); background: rgba(99,102,241,0.12); }
 
   .bl-modal-hero-content {
     position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 2.5rem;
@@ -528,7 +529,7 @@ const css = `
   .bl-modal-cat {
     display: inline-flex; align-items: center; gap: 6px;
     font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--gold); border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold); border: 1px solid rgba(99,102,241,0.3);
     padding: 4px 14px; margin-bottom: 0.75rem;
     background: rgba(8,7,5,0.5); backdrop-filter: blur(6px);
   }
@@ -565,7 +566,7 @@ const css = `
   }
   .bl-ai-spinner {
     width: 44px; height: 44px; border-radius: 50%;
-    border: 2px solid rgba(201,168,76,0.2); border-top-color: var(--gold);
+    border: 2px solid rgba(99,102,241,0.2); border-top-color: var(--gold);
     animation: spin 0.9s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -574,9 +575,9 @@ const css = `
   .bl-ai-badge {
     display: inline-flex; align-items: center; gap: 8px;
     font-size: 0.62rem; color: var(--gold3);
-    border: 1px solid rgba(201,168,76,0.2);
+    border: 1px solid rgba(99,102,241,0.2);
     padding: 5px 16px; margin-bottom: 2rem; letter-spacing: 0.15em; text-transform: uppercase;
-    background: rgba(201,168,76,0.04);
+    background: rgba(99,102,241,0.04);
   }
 
   .bl-ai-text {
@@ -585,7 +586,7 @@ const css = `
   .bl-ai-text h2 {
     font-family: "Playfair Display", serif; font-size: 1.4rem; font-weight: 400;
     color: var(--cream); margin: 2.2rem 0 0.9rem; padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(201,168,76,0.15);
+    border-bottom: 1px solid rgba(99,102,241,0.15);
   }
   .bl-ai-text h3 {
     font-family: "Playfair Display", serif; font-size: 1.1rem; font-weight: 400;
@@ -873,7 +874,7 @@ function GoldDust() {
         const a = p.alpha * (0.6 + 0.4 * Math.sin(p.flicker));
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(201,168,76,${a})`;
+        ctx.fillStyle = `rgba(99,102,241,${a})`;
         ctx.fill();
       });
       raf = requestAnimationFrame(draw);
@@ -940,7 +941,14 @@ Use a warm, authoritative travel writer tone. Markdown headings and paragraphs o
       }
     };
     generate();
-  }, [blog.id]);
+  }, [
+    blog.id,
+    blog.title,
+    blog.excerpt,
+    blog.location,
+    blog.country,
+    cat.name,
+  ]);
 
   return (
     <div
@@ -1008,11 +1016,6 @@ Use a warm, authoritative travel writer tone. Markdown headings and paragraphs o
    MAIN
 ═══════════════════════════════════════════════════════════════ */
 export default function Blogs() {
-  const ACCESS_KEY =
-    typeof import.meta !== "undefined"
-      ? import.meta.env?.VITE_UNSPLASH_KEY
-      : undefined;
-
   const [blogs, setBlogs] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [visibleCount, setVisibleCount] = useState(9);
@@ -1028,17 +1031,18 @@ export default function Blogs() {
       setLoading(true);
       const enriched = await Promise.all(
         blogData.map(async (blog) => {
-          if (ACCESS_KEY) {
-            try {
-              const res = await fetch(
-                `https://api.unsplash.com/search/photos?query=${encodeURIComponent(blog.query)}&per_page=1&orientation=landscape`,
-                { headers: { Authorization: `Client-ID ${ACCESS_KEY}` } },
-              );
-              const data = await res.json();
-              const img = data.results?.[0]?.urls?.regular;
-              if (img) return { ...blog, img };
-            } catch {}
+          try {
+            const images = await getDestinationImages(
+              `${blog.location} ${blog.country}`,
+            );
+            const img = images?.[0];
+            if (img) {
+              return { ...blog, img };
+            }
+          } catch {
+            // Fall through to static fallback images.
           }
+
           return {
             ...blog,
             img:
@@ -1051,7 +1055,7 @@ export default function Blogs() {
       setLoading(false);
     };
     load();
-  }, [ACCESS_KEY]);
+  }, []);
 
   /* Filter / sort */
   useEffect(() => {
@@ -1294,3 +1298,5 @@ export default function Blogs() {
     </div>
   );
 }
+
+

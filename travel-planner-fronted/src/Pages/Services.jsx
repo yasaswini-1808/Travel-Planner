@@ -43,6 +43,8 @@ const Services = () => {
         ],
         price: "From $9 service fee",
       },
+      available: true,
+      actionPath: "/planner",
     },
     {
       title: "Hotel Booking",
@@ -63,6 +65,8 @@ const Services = () => {
         ],
         price: "Best rate guarantee",
       },
+      available: true,
+      actionPath: "/planner",
     },
     {
       title: "AI Itinerary",
@@ -83,6 +87,30 @@ const Services = () => {
         ],
         price: "Free for all users",
       },
+      available: true,
+      actionPath: "/planner",
+    },
+    {
+      title: "Budget Tracker",
+      desc: "Track travel spending, compare against trip budget, and spot where costs are rising.",
+      icon: "💸",
+      gradient: "linear-gradient(135deg,#6366F1,#06B6D4)",
+      shadow: "rgba(99,102,241,0.42)",
+      tag: "BUDGET",
+      details: {
+        tagline: "Keep every trip cost under control",
+        about:
+          "Use the built-in budget analyzer to set a trip budget, log expenses by category, and visualize daily and category-based spending. It is designed for travelers who want financial visibility before and during the trip.",
+        highlights: [
+          "Set and update total trip budget",
+          "Track expenses by category and date",
+          "Visual charts for category and daily trends",
+          "Quick view of spent vs remaining balance",
+        ],
+        price: "Included for signed-in users",
+      },
+      available: true,
+      actionPath: "/budget",
     },
     {
       title: "Travel Insurance",
@@ -103,6 +131,8 @@ const Services = () => {
         ],
         price: "From $3/day",
       },
+      available: false,
+      actionPath: "/feedback",
     },
     {
       title: "Car Rentals",
@@ -123,6 +153,8 @@ const Services = () => {
         ],
         price: "From $18/day",
       },
+      available: false,
+      actionPath: "/feedback",
     },
     {
       title: "Tour Packages",
@@ -143,6 +175,8 @@ const Services = () => {
         ],
         price: "From $299/person",
       },
+      available: false,
+      actionPath: "/feedback",
     },
     {
       title: "24/7 Support",
@@ -163,6 +197,8 @@ const Services = () => {
         ],
         price: "Free for all bookings",
       },
+      available: false,
+      actionPath: "/feedback",
     },
     {
       title: "Visa Assistance",
@@ -183,8 +219,12 @@ const Services = () => {
         ],
         price: "From $29/application",
       },
+      available: false,
+      actionPath: "/feedback",
     },
   ];
+
+  const availableServices = services.filter((svc) => svc.available).length;
 
   const features = [
     {
@@ -218,6 +258,7 @@ const Services = () => {
   ];
 
   const s = selectedService;
+  const selectedAvailable = Boolean(s?.available);
 
   return (
     <div
@@ -287,19 +328,31 @@ const Services = () => {
           margin-top: auto; padding-top: 18px;
           font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
           border: none; background: none; cursor: pointer;
-          background: var(--g);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          color: #fff;
+          -webkit-text-fill-color: #fff;
           transition: gap 0.25s ease;
           position: relative; z-index: 1;
         }
         .explore-btn::after {
           content: '→';
-          background: var(--g);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          color: #fff;
+          -webkit-text-fill-color: #fff;
           transition: transform 0.25s ease; display: inline-block;
         }
         .svc-card:hover .explore-btn { gap: 10px; }
         .svc-card:hover .explore-btn::after { transform: translateX(4px); }
+        .explore-btn:focus-visible,
+        .explore-btn:active {
+          background: none;
+          color: #fff;
+          -webkit-text-fill-color: #fff;
+        }
+        .explore-btn:focus-visible::after,
+        .explore-btn:active::after {
+          background: none;
+          color: #fff;
+          -webkit-text-fill-color: #fff;
+        }
 
         /* Feature tabs */
         .feat-tab {
@@ -419,6 +472,91 @@ const Services = () => {
         @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
         .fade-in { opacity: 0; transform: translateY(24px); animation: fadeIn 0.7s ease forwards; }
 
+        @media (max-width: 1024px) {
+          .cursor-glow { display: none; }
+          .orb1, .orb2 { opacity: 0.6; }
+          .modal-header { padding: 28px 24px 20px; }
+          .modal-body { padding: 0 24px 24px; }
+        }
+
+        @media (max-width: 900px) {
+          .services-nav {
+            padding: 14px 16px !important;
+            gap: 10px;
+            flex-wrap: wrap;
+          }
+
+          .services-hero,
+          .services-stats,
+          .services-grid-section,
+          .services-why,
+          .services-cta {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+
+          .services-hero {
+            padding-top: 72px !important;
+          }
+
+          .services-stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+
+          .services-cards-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+
+          .services-why-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .services-cta-box {
+            padding: 42px 22px !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .orb1, .orb2 { display: none; }
+
+          .services-stats-grid,
+          .services-cards-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .stat-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+          }
+
+          .stat-item:last-child {
+            border-bottom: none;
+          }
+
+          .svc-card {
+            padding: 24px 18px 20px;
+          }
+
+          .modal-overlay {
+            padding: 12px;
+          }
+
+          .modal-box {
+            max-height: 86vh;
+            overflow-y: auto;
+          }
+
+          .modal-header,
+          .modal-body {
+            padding-left: 16px;
+            padding-right: 16px;
+          }
+
+          .modal-body [style*="grid-template-columns: 1fr 1fr"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #06070F; }
         ::-webkit-scrollbar-thumb { background: #6366F1; border-radius: 4px; }
@@ -511,6 +649,19 @@ const Services = () => {
                     }}
                   >
                     {selectedService.tag}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: "1.2px",
+                      color: selectedService.available
+                        ? "rgba(34,197,94,0.9)"
+                        : "rgba(245,158,11,0.95)",
+                      marginBottom: 6,
+                    }}
+                  >
+                    {selectedService.available ? "AVAILABLE" : "COMING SOON"}
                   </div>
                   <h2
                     style={{
@@ -636,14 +787,24 @@ const Services = () => {
                 <button
                   className="cta-primary"
                   style={{
-                    background: selectedService.gradient,
-                    boxShadow: `0 8px 32px ${selectedService.shadow}`,
+                    background: selectedService.available
+                      ? selectedService.gradient
+                      : "linear-gradient(135deg, #6b7280, #9ca3af)",
+                    boxShadow: selectedService.available
+                      ? `0 8px 32px ${selectedService.shadow}`
+                      : "0 8px 32px rgba(107,114,128,0.45)",
                     fontSize: 14,
                     padding: "14px 32px",
                   }}
-                  onClick={() => navigate("/login")}
+                  onClick={() =>
+                    navigate(selectedService.actionPath || "/feedback")
+                  }
                 >
-                  <span>Book Now</span>
+                  <span>
+                    {selectedAvailable
+                      ? "Open Service"
+                      : "Request This Service"}
+                  </span>
                   <svg
                     width="16"
                     height="16"
@@ -667,6 +828,7 @@ const Services = () => {
 
       {/* Navbar */}
       <nav
+        className="services-nav"
         style={{
           position: "relative",
           zIndex: 10,
@@ -704,12 +866,14 @@ const Services = () => {
               boxShadow: "0 0 8px #22C55E",
             }}
           />
-          All services live
+          {availableServices} live · {services.length - availableServices}{" "}
+          coming soon
         </div>
       </nav>
 
       {/* ── HERO ── */}
       <section
+        className="services-hero"
         style={{
           position: "relative",
           zIndex: 2,
@@ -753,8 +917,8 @@ const Services = () => {
             fontWeight: 300,
           }}
         >
-          Eight powerful services covering every step of your journey — from AI
-          planning to 24/7 support.
+          Core services are live today, and additional services are in active
+          development.
         </p>
         <div
           className="fade-in"
@@ -791,6 +955,7 @@ const Services = () => {
 
       {/* ── STATS ── */}
       <section
+        className="services-stats"
         style={{
           position: "relative",
           zIndex: 2,
@@ -800,6 +965,7 @@ const Services = () => {
         }}
       >
         <div
+          className="services-stats-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4,1fr)",
@@ -846,6 +1012,7 @@ const Services = () => {
 
       {/* ── SERVICES GRID ── */}
       <section
+        className="services-grid-section"
         style={{
           position: "relative",
           zIndex: 2,
@@ -881,11 +1048,12 @@ const Services = () => {
             <strong style={{ color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>
               Explore
             </strong>{" "}
-            on any card to learn more
+            on any card to learn more. Live services are marked in green.
           </p>
         </div>
 
         <div
+          className="services-cards-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4,1fr)",
@@ -915,6 +1083,21 @@ const Services = () => {
                 }}
               >
                 {svc.tag}
+              </div>
+              <div
+                style={{
+                  position: "absolute",
+                  top: 32,
+                  right: 18,
+                  fontSize: 9,
+                  fontWeight: 700,
+                  letterSpacing: "1.2px",
+                  color: svc.available
+                    ? "rgba(34,197,94,0.9)"
+                    : "rgba(245,158,11,0.9)",
+                }}
+              >
+                {svc.available ? "LIVE" : "SOON"}
               </div>
 
               <div className="icon-wrap">{svc.icon}</div>
@@ -960,6 +1143,7 @@ const Services = () => {
 
       {/* ── WHY CHOOSE US ── */}
       <section
+        className="services-why"
         style={{
           position: "relative",
           zIndex: 2,
@@ -977,7 +1161,10 @@ const Services = () => {
             backdropFilter: "blur(20px)",
           }}
         >
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr" }}>
+          <div
+            className="services-why-grid"
+            style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr" }}
+          >
             <div
               style={{
                 padding: "52px 40px",
@@ -1124,6 +1311,7 @@ const Services = () => {
 
       {/* ── CTA ── */}
       <section
+        className="services-cta"
         style={{
           position: "relative",
           zIndex: 2,
@@ -1133,6 +1321,7 @@ const Services = () => {
         }}
       >
         <div
+          className="services-cta-box"
           style={{
             borderRadius: 40,
             padding: "76px 68px",

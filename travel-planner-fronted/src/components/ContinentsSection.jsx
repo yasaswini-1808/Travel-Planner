@@ -79,7 +79,6 @@ export const ContinentsSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [showCountryInfo, setShowCountryInfo] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState(null);
   const { preferredCountry } = useTravelContext();
 
   const handleContinentClick = (name) => {
@@ -112,23 +111,23 @@ export const ContinentsSection = () => {
           position: relative; z-index: 2;
           padding: 6rem 1.5rem;
           background:
-            radial-gradient(ellipse 80% 50% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
-            linear-gradient(180deg, #080705 0%, #0c0a07 50%, #080705 100%);
-          border-top: 1px solid rgba(201,168,76,0.15);
+            radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99,102,241,0.06) 0%, transparent 60%),
+            linear-gradient(180deg, #06070f 0%, #0b1020 50%, #06070f 100%);
+          border-top: 1px solid rgba(99,102,241,0.15);
           overflow: hidden;
         }
 
         /* Gold dot grid */
         .cs-section::before {
           content: ""; position: absolute; inset: 0; pointer-events: none;
-          background-image: radial-gradient(circle at 1px 1px, rgba(201,168,76,0.05) 1px, transparent 0);
+          background-image: radial-gradient(circle at 1px 1px, rgba(99,102,241,0.05) 1px, transparent 0);
           background-size: 48px 48px;
         }
 
         /* Vertical accent lines */
         .cs-vline {
           position: absolute; width: 1px; pointer-events: none;
-          background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.15), transparent);
+          background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.15), transparent);
         }
 
         .cs-inner { max-width: 1280px; margin: 0 auto; position: relative; z-index: 1; }
@@ -141,17 +140,17 @@ export const ContinentsSection = () => {
         }
         .cs-ornament-line {
           height: 1px; width: 50px;
-          background: linear-gradient(to right, transparent, #c9a84c);
+          background: linear-gradient(to right, transparent, #6366f1);
         }
-        .cs-ornament-line.r { background: linear-gradient(to left, transparent, #c9a84c); }
+        .cs-ornament-line.r { background: linear-gradient(to left, transparent, #6366f1); }
         .cs-ornament-gem {
-          width: 7px; height: 7px; background: #c9a84c;
-          transform: rotate(45deg); box-shadow: 0 0 10px rgba(201,168,76,0.5);
+          width: 7px; height: 7px; background: #6366f1;
+          transform: rotate(45deg); box-shadow: 0 0 10px rgba(99,102,241,0.5);
         }
         .cs-ornament-text {
           font-family: "Jost", sans-serif;
           font-size: 0.6rem; font-weight: 500; letter-spacing: 0.3em;
-          text-transform: uppercase; color: #c9a84c;
+          text-transform: uppercase; color: #6366f1;
         }
 
         .cs-title {
@@ -162,7 +161,7 @@ export const ContinentsSection = () => {
         }
         .cs-title em {
           font-style: italic;
-          background: linear-gradient(135deg, #a07832, #c9a84c, #e8c97a, #c9a84c);
+          background: linear-gradient(135deg, #ec4899, #6366f1, #c4b5fd, #6366f1);
           background-size: 200% auto;
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
           animation: csTitleShimmer 5s linear infinite;
@@ -182,10 +181,10 @@ export const ContinentsSection = () => {
           display: inline-flex; align-items: center; gap: 8px;
           margin-top: 1.2rem; font-family: "Jost", sans-serif;
           font-size: 0.75rem; font-weight: 400; letter-spacing: 0.1em;
-          color: #a07832; border: 1px solid rgba(201,168,76,0.25);
-          padding: 6px 18px; background: rgba(201,168,76,0.06);
+          color: #ec4899; border: 1px solid rgba(99,102,241,0.25);
+          padding: 6px 18px; background: rgba(99,102,241,0.06);
         }
-        .cs-preferred strong { color: #e8c97a; font-weight: 500; }
+        .cs-preferred strong { color: #c4b5fd; font-weight: 500; }
 
         /* ── GRID ── */
         .cs-grid {
@@ -201,7 +200,7 @@ export const ContinentsSection = () => {
         /* ── CARD ── */
         .cs-card {
           position: relative; overflow: hidden; cursor: pointer;
-          border: 1px solid rgba(201,168,76,0.14);
+          border: 1px solid rgba(99,102,241,0.14);
           background: #0a0806;
           transition: transform 0.45s cubic-bezier(0.22,1,0.36,1),
                       border-color 0.3s, box-shadow 0.45s;
@@ -211,8 +210,8 @@ export const ContinentsSection = () => {
         }
         .cs-card:hover {
           transform: translateY(-8px) scale(1.01);
-          border-color: rgba(201,168,76,0.55);
-          box-shadow: 0 28px 70px rgba(0,0,0,0.6), 0 0 40px rgba(201,168,76,0.1);
+          border-color: rgba(99,102,241,0.55);
+          box-shadow: 0 28px 70px rgba(0,0,0,0.6), 0 0 40px rgba(99,102,241,0.1);
           z-index: 2;
         }
         @keyframes csCardReveal {
@@ -223,7 +222,7 @@ export const ContinentsSection = () => {
         /* Top gold line on hover */
         .cs-card::before {
           content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-          background: linear-gradient(90deg, transparent, #c9a84c, #e8c97a, #c9a84c, transparent);
+          background: linear-gradient(90deg, transparent, #6366f1, #c4b5fd, #6366f1, transparent);
           opacity: 0; transition: opacity 0.3s; z-index: 3;
         }
         .cs-card:hover::before { opacity: 1; }
@@ -234,7 +233,7 @@ export const ContinentsSection = () => {
         }
         .cs-card-scan {
           position: absolute; inset: 0; pointer-events: none; z-index: 2;
-          background: linear-gradient(to bottom, transparent 0%, rgba(201,168,76,0.07) 50%, transparent 100%);
+          background: linear-gradient(to bottom, transparent 0%, rgba(99,102,241,0.07) 50%, transparent 100%);
           transform: translateY(-100%);
         }
         @keyframes csScan {
@@ -271,7 +270,7 @@ export const ContinentsSection = () => {
           position: absolute; top: 0; left: 0;
           font-family: "Jost", sans-serif;
           font-size: 0.58rem; font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase;
-          color: #080705; background: #c9a84c;
+          color: #06070f; background: #6366f1;
           padding: 5px 16px 5px 12px;
           clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
           z-index: 3;
@@ -280,10 +279,10 @@ export const ContinentsSection = () => {
         /* Icon */
         .cs-card-icon {
           position: absolute; top: 14px; right: 14px; z-index: 3;
-          font-size: 1rem; color: rgba(201,168,76,0.4);
+          font-size: 1rem; color: rgba(99,102,241,0.4);
           transition: color 0.3s, transform 0.3s;
         }
-        .cs-card:hover .cs-card-icon { color: rgba(201,168,76,0.8); transform: scale(1.2) rotate(15deg); }
+        .cs-card:hover .cs-card-icon { color: rgba(99,102,241,0.8); transform: scale(1.2) rotate(15deg); }
 
         /* Content */
         .cs-card-content {
@@ -293,12 +292,12 @@ export const ContinentsSection = () => {
         .cs-card-count {
           font-family: "Jost", sans-serif;
           font-size: 0.6rem; font-weight: 500; letter-spacing: 0.22em;
-          text-transform: uppercase; color: #a07832; margin-bottom: 0.4rem;
+          text-transform: uppercase; color: #ec4899; margin-bottom: 0.4rem;
           display: flex; align-items: center; gap: 6px;
         }
         .cs-card-count::before {
           content: ""; display: inline-block; width: 16px; height: 1px;
-          background: #a07832;
+          background: #ec4899;
         }
 
         .cs-card-name {
@@ -307,7 +306,7 @@ export const ContinentsSection = () => {
           color: #f5eed8; line-height: 1.2; margin-bottom: 0.5rem;
           transition: color 0.25s;
         }
-        .cs-card:hover .cs-card-name { color: #e8c97a; }
+        .cs-card:hover .cs-card-name { color: #c4b5fd; }
 
         .cs-card-desc {
           font-family: "Jost", sans-serif;
@@ -324,7 +323,7 @@ export const ContinentsSection = () => {
           display: inline-flex; align-items: center; gap: 6px;
           margin-top: 0.85rem; font-family: "Jost", sans-serif;
           font-size: 0.68rem; font-weight: 500; letter-spacing: 0.15em;
-          text-transform: uppercase; color: #c9a84c;
+          text-transform: uppercase; color: #6366f1;
           opacity: 0; transform: translateY(4px);
           transition: opacity 0.35s, transform 0.35s;
         }
@@ -335,7 +334,7 @@ export const ContinentsSection = () => {
         /* Bottom gold border line */
         .cs-card-bottom {
           position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+          background: linear-gradient(90deg, transparent, rgba(99,102,241,0.3), transparent);
           transform: scaleX(0); transition: transform 0.4s ease;
           z-index: 3;
         }
@@ -346,11 +345,11 @@ export const ContinentsSection = () => {
           display: flex; align-items: center; justify-content: center;
           gap: 12px; margin-top: 4rem;
         }
-        .cs-deco-bar { height: 1px; width: 80px; background: linear-gradient(to right, transparent, rgba(201,168,76,0.25)); }
-        .cs-deco-bar.r { background: linear-gradient(to left, transparent, rgba(201,168,76,0.25)); }
+        .cs-deco-bar { height: 1px; width: 80px; background: linear-gradient(to right, transparent, rgba(99,102,241,0.25)); }
+        .cs-deco-bar.r { background: linear-gradient(to left, transparent, rgba(99,102,241,0.25)); }
         .cs-deco-text {
           font-family: "Jost", sans-serif;
-          font-size: 0.58rem; color: rgba(201,168,76,0.35);
+          font-size: 0.58rem; color: rgba(99,102,241,0.35);
           letter-spacing: 0.3em; text-transform: uppercase;
         }
       `}</style>
@@ -372,7 +371,7 @@ export const ContinentsSection = () => {
             top: 0,
             height: "60px",
             background:
-              "linear-gradient(to bottom,rgba(201,168,76,0.3),transparent)",
+              "linear-gradient(to bottom,rgba(99,102,241,0.3),transparent)",
           }}
         />
 
@@ -424,8 +423,6 @@ export const ContinentsSection = () => {
                 className="cs-card"
                 style={{ animationDelay: `${idx * 0.07}s` }}
                 onClick={() => handleContinentClick(continent.name)}
-                onMouseEnter={() => setHoveredCard(continent.name)}
-                onMouseLeave={() => setHoveredCard(null)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) =>

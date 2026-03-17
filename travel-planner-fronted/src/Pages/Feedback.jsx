@@ -825,6 +825,7 @@ function SuccessScreen({ onReset }) {
         />
       ))}
       <div
+        className="feedback-success-modal"
         style={{
           background:
             "linear-gradient(145deg,rgba(17,24,51,0.95),rgba(30,14,70,0.95))",
@@ -1053,6 +1054,7 @@ export default function Feedback() {
 
       {/* ─── HERO ─── */}
       <section
+        className="feedback-hero-section"
         style={{
           position: "relative",
           minHeight: "92vh",
@@ -1242,6 +1244,7 @@ export default function Feedback() {
         {/* Floating emojis */}
         {["🌍", "🏖️", "🗺️", "🎒", "🧭", "✈️"].map((e, i) => (
           <span
+            className="feedback-floating-emoji"
             key={i}
             style={{
               position: "absolute",
@@ -1352,6 +1355,7 @@ export default function Feedback() {
 
       {/* ─── FEEDBACK FORM ─── */}
       <section
+        className="feedback-form-section"
         id="feedback-form"
         style={{
           padding: "80px 20px",
@@ -1388,6 +1392,7 @@ export default function Feedback() {
           {/* Two-column layout: form + live preview */}
           <Reveal delay={0.1}>
             <div
+              className="feedback-main-grid"
               style={{
                 display: "grid",
                 gridTemplateColumns: "1fr minmax(0,360px)",
@@ -1536,6 +1541,7 @@ export default function Feedback() {
 
                   {/* NAME & EMAIL */}
                   <div
+                    className="feedback-name-email-grid"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr",
@@ -1703,6 +1709,7 @@ export default function Feedback() {
 
               {/* LIVE PREVIEW PANEL (new) — sticks to top on scroll */}
               <div
+                className="feedback-side-panel"
                 style={{
                   position: "sticky",
                   top: "24px",
@@ -1896,12 +1903,37 @@ export default function Feedback() {
         @keyframes badgePulse { 0%,100% { box-shadow:0 0 0 0 rgba(168,85,247,0); } 50% { box-shadow:0 0 0 8px rgba(168,85,247,0.1); } }
         @keyframes scrollLine { 0%,100% { opacity:0.5; transform:scaleY(1); } 50% { opacity:1; transform:scaleY(1.2); } }
         @media (max-width: 900px) {
-          #feedback-form > div > div > div[style*="grid"] {
+          .feedback-main-grid {
             grid-template-columns: 1fr !important;
+          }
+
+          .feedback-side-panel {
+            position: static !important;
+            top: auto !important;
           }
         }
         @media (max-width: 600px) {
-          form > div:nth-child(5) { grid-template-columns:1fr !important; }
+          .feedback-hero-section {
+            min-height: auto !important;
+            padding: 64px 16px 56px !important;
+          }
+
+          .feedback-floating-emoji {
+            display: none;
+          }
+
+          .feedback-form-section {
+            padding: 56px 14px !important;
+          }
+
+          .feedback-name-email-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .feedback-success-modal {
+            width: 94% !important;
+            padding: 30px 18px !important;
+          }
         }
         ::placeholder { color: rgba(241,245,249,0.25); }
         * { -webkit-tap-highlight-color: transparent; }

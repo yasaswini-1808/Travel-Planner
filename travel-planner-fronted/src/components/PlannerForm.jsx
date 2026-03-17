@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { saveItinerary } from "../api/itineraryAPI";
 import { searchBookings } from "../api/bookingsAPI";
+import { getDestinationImages } from "../api/unsplash";
+import { getCurrentWeather, getWeather } from "../api/Weather";
 
 /* ═══════════════════════════════════════════════════════
    CURRENCY DATA
@@ -136,11 +138,19 @@ const DAY_BG = [
 const GL = {
   fontSize: 10,
   fontWeight: 800,
-  color: "rgba(201,168,76,0.7)",
+  color: "rgba(99,102,241,0.7)",
   textTransform: "uppercase",
   letterSpacing: "1.5px",
   marginBottom: 6,
   fontFamily: "'Jost',sans-serif",
+};
+
+const formatWeatherCondition = (weather) => {
+  const description = weather?.weather?.[0]?.description;
+  const fallback = weather?.weather?.[0]?.main || "Unknown";
+  return description
+    ? description.replace(/\b\w/g, (letter) => letter.toUpperCase())
+    : fallback;
 };
 
 /* ═══════════════════════════════════════════════════════
@@ -182,17 +192,17 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
 
   const btnBg = dark
     ? open
-      ? "rgba(201,168,76,0.14)"
-      : "rgba(201,168,76,0.06)"
+      ? "rgba(99,102,241,0.14)"
+      : "rgba(99,102,241,0.06)"
     : open
-      ? "rgba(201,168,76,0.12)"
+      ? "rgba(99,102,241,0.12)"
       : "#fff";
   const btnBord = dark
     ? open
-      ? "rgba(201,168,76,0.6)"
-      : "rgba(201,168,76,0.25)"
+      ? "rgba(99,102,241,0.6)"
+      : "rgba(99,102,241,0.25)"
     : open
-      ? "#c9a84c"
+      ? "#6366f1"
       : "#e2e8f0";
   const btnClr = dark ? "#e8e0cc" : "#1a1814";
 
@@ -234,8 +244,8 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
         </span>
         <span
           style={{
-            background: "rgba(201,168,76,0.18)",
-            color: "#c9a84c",
+            background: "rgba(99,102,241,0.18)",
+            color: "#6366f1",
             fontSize: 11,
             fontWeight: 700,
             padding: "2px 8px",
@@ -245,7 +255,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
           {sel?.s}
         </span>
         <span
-          style={{ color: "rgba(201,168,76,0.5)", fontSize: 9, marginLeft: 2 }}
+          style={{ color: "rgba(99,102,241,0.5)", fontSize: 9, marginLeft: 2 }}
         >
           {open ? "▲" : "▼"}
         </span>
@@ -259,7 +269,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
             left: 0,
             right: 0,
             background: "#0c0a07",
-            border: "1px solid rgba(201,168,76,0.2)",
+            border: "1px solid rgba(99,102,241,0.2)",
             zIndex: 9999,
             boxShadow: "0 20px 60px rgba(0,0,0,0.7)",
             display: "flex",
@@ -272,7 +282,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
           <div
             style={{
               padding: "10px 12px",
-              borderBottom: "1px solid rgba(201,168,76,0.1)",
+              borderBottom: "1px solid rgba(99,102,241,0.1)",
               flexShrink: 0,
             }}
           >
@@ -283,8 +293,8 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
               placeholder="Search currency or country…"
               style={{
                 width: "100%",
-                background: "rgba(201,168,76,0.06)",
-                border: "1px solid rgba(201,168,76,0.15)",
+                background: "rgba(99,102,241,0.06)",
+                border: "1px solid rgba(99,102,241,0.15)",
                 padding: "8px 12px",
                 color: "#e8e0cc",
                 fontSize: 12,
@@ -301,12 +311,12 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
                   style={{
                     fontSize: 9,
                     fontWeight: 700,
-                    color: "#c9a84c",
+                    color: "#6366f1",
                     textTransform: "uppercase",
                     letterSpacing: "1.5px",
                     padding: "7px 14px 3px",
-                    background: "rgba(201,168,76,0.04)",
-                    borderBottom: "1px solid rgba(201,168,76,0.06)",
+                    background: "rgba(99,102,241,0.04)",
+                    borderBottom: "1px solid rgba(99,102,241,0.06)",
                   }}
                 >
                   ⎯ {r}
@@ -330,12 +340,12 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
                         border: "none",
                         padding: "9px 14px",
                         background: active
-                          ? "rgba(201,168,76,0.1)"
+                          ? "rgba(99,102,241,0.1)"
                           : "transparent",
                         cursor: "pointer",
                         fontFamily: "'Jost',sans-serif",
                         fontSize: 12,
-                        color: active ? "#c9a84c" : "rgba(232,224,204,0.8)",
+                        color: active ? "#6366f1" : "rgba(232,224,204,0.8)",
                         fontWeight: active ? 600 : 400,
                         textAlign: "left",
                         transition: "background 0.12s",
@@ -343,7 +353,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
                       onMouseEnter={(e) => {
                         if (!active)
                           e.currentTarget.style.background =
-                            "rgba(201,168,76,0.05)";
+                            "rgba(99,102,241,0.05)";
                       }}
                       onMouseLeave={(e) => {
                         if (!active)
@@ -367,7 +377,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
                         style={{
                           fontSize: 10,
                           fontFamily: "monospace",
-                          color: "rgba(201,168,76,0.35)",
+                          color: "rgba(99,102,241,0.35)",
                           flexShrink: 0,
                         }}
                       >
@@ -376,7 +386,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
                       <span
                         style={{
                           fontSize: 11,
-                          color: "rgba(201,168,76,0.6)",
+                          color: "rgba(99,102,241,0.6)",
                           minWidth: 24,
                           textAlign: "right",
                           flexShrink: 0,
@@ -385,7 +395,7 @@ function CurrencyDropdown({ value, onChange, dark = true }) {
                         {c.s}
                       </span>
                       {active && (
-                        <span style={{ color: "#c9a84c", fontSize: 11 }}>
+                        <span style={{ color: "#6366f1", fontSize: 11 }}>
                           ✓
                         </span>
                       )}
@@ -436,8 +446,8 @@ function QuickConverter({ userCurrency, exchangeRates }) {
           onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
           style={{
             width: "100%",
-            background: "rgba(201,168,76,0.06)",
-            border: "1.5px solid rgba(201,168,76,0.2)",
+            background: "rgba(99,102,241,0.06)",
+            border: "1.5px solid rgba(99,102,241,0.2)",
             padding: "11px 12px",
             color: "#e8e0cc",
             fontSize: 14,
@@ -453,8 +463,8 @@ function QuickConverter({ userCurrency, exchangeRates }) {
       </div>
       <div
         style={{
-          background: "rgba(201,168,76,0.1)",
-          border: "1.5px solid rgba(201,168,76,0.3)",
+          background: "rgba(99,102,241,0.1)",
+          border: "1.5px solid rgba(99,102,241,0.3)",
           padding: "11px 14px",
           minHeight: 46,
         }}
@@ -462,7 +472,7 @@ function QuickConverter({ userCurrency, exchangeRates }) {
         <p
           style={{
             fontSize: 9,
-            color: "#c9a84c",
+            color: "#6366f1",
             fontWeight: 700,
             textTransform: "uppercase",
             letterSpacing: "1.5px",
@@ -476,7 +486,7 @@ function QuickConverter({ userCurrency, exchangeRates }) {
           style={{
             fontSize: 16,
             fontWeight: 700,
-            color: "#e8c97a",
+            color: "#c4b5fd",
             lineHeight: 1,
             fontFamily: "'Playfair Display',serif",
           }}
@@ -505,10 +515,10 @@ function Tag({ label, active, onClick }) {
         fontSize: 12,
         fontWeight: active ? 600 : 400,
         transition: "all 0.22s",
-        border: `1px solid ${active ? "rgba(201,168,76,0.6)" : "rgba(201,168,76,0.18)"}`,
-        background: active ? "rgba(201,168,76,0.15)" : "transparent",
-        color: active ? "#e8c97a" : "rgba(232,224,204,0.5)",
-        boxShadow: active ? "0 0 16px rgba(201,168,76,0.15)" : "none",
+        border: `1px solid ${active ? "rgba(99,102,241,0.6)" : "rgba(99,102,241,0.18)"}`,
+        background: active ? "rgba(99,102,241,0.15)" : "transparent",
+        color: active ? "#c4b5fd" : "rgba(232,224,204,0.5)",
+        boxShadow: active ? "0 0 16px rgba(99,102,241,0.15)" : "none",
         transform: active ? "translateY(-1px) scale(1.02)" : "none",
         letterSpacing: "0.04em",
       }}
@@ -525,15 +535,15 @@ function SectionBlock({ icon, label, text }) {
   return (
     <div
       style={{
-        background: "rgba(201,168,76,0.05)",
-        borderLeft: "2px solid rgba(201,168,76,0.3)",
+        background: "rgba(99,102,241,0.05)",
+        borderLeft: "2px solid rgba(99,102,241,0.3)",
         padding: "12px 15px",
       }}
     >
       <p
         style={{
           fontWeight: 600,
-          color: "#c9a84c",
+          color: "#6366f1",
           fontSize: 10,
           textTransform: "uppercase",
           letterSpacing: "1.2px",
@@ -579,13 +589,13 @@ function Ornament({ label }) {
           height: 1,
           flex: 1,
           background:
-            "linear-gradient(to right, transparent, rgba(201,168,76,0.3))",
+            "linear-gradient(to right, transparent, rgba(99,102,241,0.3))",
         }}
       />
       <span
         style={{
           fontSize: "0.6rem",
-          color: "#a07832",
+          color: "#ec4899",
           letterSpacing: "0.3em",
           textTransform: "uppercase",
           fontFamily: "'Jost',sans-serif",
@@ -599,7 +609,7 @@ function Ornament({ label }) {
           height: 1,
           flex: 1,
           background:
-            "linear-gradient(to left, transparent, rgba(201,168,76,0.3))",
+            "linear-gradient(to left, transparent, rgba(99,102,241,0.3))",
         }}
       />
     </div>
@@ -609,7 +619,7 @@ function Ornament({ label }) {
 const fieldLabel = {
   fontSize: 10,
   fontWeight: 600,
-  color: "rgba(201,168,76,0.65)",
+  color: "rgba(99,102,241,0.65)",
   textTransform: "uppercase",
   letterSpacing: "1.5px",
   marginBottom: 7,
@@ -618,9 +628,9 @@ const fieldLabel = {
 };
 const fieldInput = {
   width: "100%",
-  background: "rgba(201,168,76,0.04)",
-  border: "1px solid rgba(201,168,76,0.2)",
-  borderBottom: "2px solid rgba(201,168,76,0.3)",
+  background: "rgba(99,102,241,0.04)",
+  border: "1px solid rgba(99,102,241,0.2)",
+  borderBottom: "2px solid rgba(99,102,241,0.3)",
   padding: "11px 14px",
   color: "#e8e0cc",
   fontSize: 13,
@@ -636,6 +646,8 @@ const fieldInput = {
 ═══════════════════════════════════════════════════════ */
 export default function TripNavigatorAI() {
   const [bgIdx, setBgIdx] = useState(0);
+  const [heroImages, setHeroImages] = useState([]);
+  const [destinationImages, setDestinationImages] = useState([]);
   const [userCurrency, setUserCurrency] = useState("usd");
   const [exchangeRates, setExchangeRates] = useState({});
   const [showConverter, setShowConverter] = useState(false);
@@ -661,12 +673,62 @@ export default function TripNavigatorAI() {
   const [error, setError] = useState("");
   const [itinerary, setItinerary] = useState(null);
   const [showSourceSuggestions, setShowSourceSuggestions] = useState(false);
+  const [weatherData, setWeatherData] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState("");
   const resultsRef = useRef(null);
+  const activeHeroImages = heroImages.length ? heroImages : BG;
+  const activeDestinationImages = destinationImages.length
+    ? destinationImages
+    : DAY_BG;
 
   useEffect(() => {
-    const t = setInterval(() => setBgIdx((i) => (i + 1) % BG.length), 7000);
+    const t = setInterval(
+      () => setBgIdx((i) => (i + 1) % activeHeroImages.length),
+      7000,
+    );
     return () => clearInterval(t);
+  }, [activeHeroImages.length]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadHeroImages = async () => {
+      const images = await getDestinationImages("travel planning destinations");
+      if (!cancelled && images.length) {
+        setHeroImages(images.slice(0, BG.length));
+      }
+    };
+
+    loadHeroImages();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  useEffect(() => {
+    const query = String(form.destination || "").trim();
+    if (query.length < 3) {
+      setDestinationImages([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadDestinationImages = async () => {
+      const images = await getDestinationImages(`${query} travel landmarks`);
+      if (!cancelled) {
+        setDestinationImages(images);
+      }
+    };
+
+    loadDestinationImages();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [form.destination]);
 
   useEffect(() => {
     fetch(
@@ -676,6 +738,55 @@ export default function TripNavigatorAI() {
       .then((d) => setExchangeRates(d[userCurrency] || {}))
       .catch(() => {});
   }, [userCurrency]);
+
+  const fetchWeatherByCity = useCallback(async (cityName) => {
+    const q = String(cityName || "").trim();
+    if (!q) return;
+
+    try {
+      setWeatherLoading(true);
+      setWeatherError("");
+      const payload = await getWeather(q);
+      if (payload?.error) {
+        throw new Error(
+          payload?.message || "Could not fetch destination weather",
+        );
+      }
+      setWeatherData(payload);
+    } catch (err) {
+      setWeatherData(null);
+      setWeatherError(err.message || "Could not fetch destination weather");
+    } finally {
+      setWeatherLoading(false);
+    }
+  }, []);
+
+  const fetchWeatherByCoords = useCallback(async (lat, lon) => {
+    try {
+      setWeatherLoading(true);
+      setWeatherError("");
+      const payload = await getCurrentWeather(lat, lon);
+      if (payload?.error) {
+        throw new Error(payload?.message || "Could not fetch location weather");
+      }
+      setWeatherData(payload);
+    } catch (err) {
+      setWeatherData(null);
+      setWeatherError(err.message || "Could not fetch location weather");
+    } finally {
+      setWeatherLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!form.destination || form.destination.trim().length < 3) return;
+
+    const id = setTimeout(() => {
+      fetchWeatherByCity(form.destination);
+    }, 700);
+
+    return () => clearTimeout(id);
+  }, [form.destination, fetchWeatherByCity]);
 
   const convert = useCallback(
     (raw, num = false) => {
@@ -840,6 +951,7 @@ export default function TripNavigatorAI() {
             ...f,
             source: label || data?.display_name || `${latitude}, ${longitude}`,
           }));
+          await fetchWeatherByCoords(latitude, longitude);
         } catch {
           setError("Could not resolve your current location name.");
         } finally {
@@ -906,7 +1018,7 @@ export default function TripNavigatorAI() {
     <div
       style={{
         fontFamily: "'Jost','DM Sans',sans-serif",
-        background: "#080705",
+        background: "#06070f",
         minHeight: "100vh",
         color: "#e8e0cc",
         overflowX: "hidden",
@@ -954,18 +1066,18 @@ export default function TripNavigatorAI() {
         /* Inputs */
         input:focus, textarea:focus {
           outline: none !important;
-          border-color: #c9a84c !important;
-          border-bottom-color: #e8c97a !important;
-          box-shadow: 0 0 0 2px rgba(201,168,76,0.1) !important;
-          background: rgba(201,168,76,0.08) !important;
+          border-color: #6366f1 !important;
+          border-bottom-color: #c4b5fd !important;
+          box-shadow: 0 0 0 2px rgba(99,102,241,0.1) !important;
+          background: rgba(99,102,241,0.08) !important;
         }
-        select:focus { outline: none !important; border-color: #c9a84c !important; }
+        select:focus { outline: none !important; border-color: #6366f1 !important; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) saturate(3) hue-rotate(5deg); cursor:pointer; }
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { opacity: 0.4; }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(201,168,76,0.04); }
-        ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(99,102,241,0.04); }
+        ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 10px; }
 
         /* HERO — full viewport */
         .tn-hero {
@@ -987,26 +1099,26 @@ export default function TripNavigatorAI() {
         }
         .tn-hero-grid {
           position: absolute; inset: 0; z-index: 2; pointer-events: none;
-          background-image: linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+          background-image: linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
           background-size: 70px 70px;
         }
         .tn-hero::before {
           content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
           width: 1px; height: 90px;
-          background: linear-gradient(to bottom, transparent, #c9a84c, transparent);
+          background: linear-gradient(to bottom, transparent, #6366f1, transparent);
           z-index: 3; animation: riseUp 1.8s ease 0.3s both;
         }
         .tn-hero-inner { position: relative; z-index: 4; width: 100%; max-width: 800px; padding: 0 20px 80px; }
 
         .tn-hero-badge {
           display: inline-flex; align-items: center; gap: 8px; margin-bottom: 1.8rem;
-          background: rgba(201,168,76,0.1); backdrop-filter: blur(16px);
-          border: 1px solid rgba(201,168,76,0.3); color: #c9a84c;
+          background: rgba(99,102,241,0.1); backdrop-filter: blur(16px);
+          border: 1px solid rgba(99,102,241,0.3); color: #6366f1;
           padding: 7px 22px; font-size: 0.6rem; font-weight: 600;
           letter-spacing: 0.3em; text-transform: uppercase;
           animation: riseUp 0.8s ease 0.2s both;
         }
-        .tn-hero-badge span { width:6px; height:6px; background:#c9a84c; transform:rotate(45deg); box-shadow:0 0 8px #c9a84c; animation: glowPulse 2s ease infinite; }
+        .tn-hero-badge span { width:6px; height:6px; background:#6366f1; transform:rotate(45deg); box-shadow:0 0 8px #6366f1; animation: glowPulse 2s ease infinite; }
 
         .tn-hero-title {
           font-family: "Playfair Display", serif;
@@ -1017,7 +1129,7 @@ export default function TripNavigatorAI() {
         .tn-title-white { color: #f5eed8; display: block; }
         .tn-title-gold {
           display: block; font-style: italic;
-          background: linear-gradient(135deg, #a07832, #c9a84c, #e8c97a, #c9a84c);
+          background: linear-gradient(135deg, #ec4899, #6366f1, #c4b5fd, #6366f1);
           background-size: 200% auto;
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
           animation: riseUp 0.9s ease 0.4s both, goldShim 5s linear 1.5s infinite;
@@ -1036,7 +1148,7 @@ export default function TripNavigatorAI() {
         .tn-stat-item { animation: floatUp 4s ease-in-out infinite; }
         .tn-stat-item:nth-child(2) { animation-delay: 0.8s; }
         .tn-stat-item:nth-child(3) { animation-delay: 1.6s; }
-        .tn-stat-num { font-family:"Playfair Display",serif; font-size:2.6rem; font-weight:400; color:#c9a84c; line-height:1; display:block; }
+        .tn-stat-num { font-family:"Playfair Display",serif; font-size:2.6rem; font-weight:400; color:#6366f1; line-height:1; display:block; }
         .tn-stat-label { font-size:0.58rem; color:rgba(232,224,204,0.45); text-transform:uppercase; letter-spacing:0.28em; margin-top:3px; display:block; }
 
         .tn-scroll-cue {
@@ -1044,9 +1156,9 @@ export default function TripNavigatorAI() {
           z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 6px;
           animation: fadeIn 1s ease 1.4s both; opacity: 0; animation-fill-mode: forwards;
         }
-        .tn-scroll-text { font-size:0.55rem; color:rgba(201,168,76,0.4); letter-spacing:0.35em; text-transform:uppercase; }
-        .tn-scroll-track { width:1px; height:50px; background:rgba(201,168,76,0.15); position:relative; overflow:hidden; }
-        .tn-scroll-track::after { content:""; position:absolute; top:-40%; left:0; width:100%; height:40%; background:#c9a84c; animation:scrollDrop 1.8s ease-in-out infinite; }
+        .tn-scroll-text { font-size:0.55rem; color:rgba(99,102,241,0.4); letter-spacing:0.35em; text-transform:uppercase; }
+        .tn-scroll-track { width:1px; height:50px; background:rgba(99,102,241,0.15); position:relative; overflow:hidden; }
+        .tn-scroll-track::after { content:""; position:absolute; top:-40%; left:0; width:100%; height:40%; background:#6366f1; animation:scrollDrop 1.8s ease-in-out infinite; }
 
         /* MAIN */
         .tn-main { width: 100%; max-width: 1000px; margin: 0 auto; padding: 0 16px 80px; }
@@ -1054,59 +1166,59 @@ export default function TripNavigatorAI() {
         /* GLASS */
         .tn-glass {
           background: rgba(12,10,7,0.92); backdrop-filter: blur(24px);
-          border: 1px solid rgba(201,168,76,0.18); box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+          border: 1px solid rgba(99,102,241,0.18); box-shadow: 0 24px 64px rgba(0,0,0,0.5);
           position: relative;
         }
         .tn-glass::before {
           content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-          background: linear-gradient(90deg, transparent, #a07832, #c9a84c, #a07832, transparent);
+          background: linear-gradient(90deg, transparent, #ec4899, #6366f1, #ec4899, transparent);
           background-size: 200% 100%; animation: borderFlow 4s linear infinite;
         }
 
         /* FORM CARD */
         .tn-form-card {
-          background: rgba(14,11,8,0.97); border: 1px solid rgba(201,168,76,0.18);
+          background: rgba(14,11,8,0.97); border: 1px solid rgba(99,102,241,0.18);
           box-shadow: 0 12px 48px rgba(0,0,0,0.4); overflow: hidden; margin-bottom: 24px;
           position: relative;
         }
         .tn-form-card::before {
           content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-          background: linear-gradient(90deg, transparent, #a07832, #e8c97a, #a07832, transparent);
+          background: linear-gradient(90deg, transparent, #ec4899, #c4b5fd, #ec4899, transparent);
           background-size: 200% 100%; animation: borderFlow 4s linear infinite;
         }
 
         /* Form header (no photo) */
         .tn-form-header {
           padding: 28px 28px 20px;
-          border-bottom: 1px solid rgba(201,168,76,0.1);
-          background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+          border-bottom: 1px solid rgba(99,102,241,0.1);
+          background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, transparent 60%);
           position: relative; overflow: hidden;
         }
         .tn-form-header::after {
           content: "✈";
           position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
-          font-size: 80px; opacity: 0.04; color: #c9a84c;
+          font-size: 80px; opacity: 0.04; color: #6366f1;
           animation: floatUp 6s ease-in-out infinite;
         }
 
         /* SELECT */
         .tn-select {
-          width: 100%; background: rgba(201,168,76,0.04);
-          border: 1px solid rgba(201,168,76,0.2); border-bottom: 2px solid rgba(201,168,76,0.3);
+          width: 100%; background: rgba(99,102,241,0.04);
+          border: 1px solid rgba(99,102,241,0.2); border-bottom: 2px solid rgba(99,102,241,0.3);
           padding: 11px 14px; color: #e8e0cc;
           font-family: "Jost", sans-serif; font-size: 13px; font-weight: 300;
           outline: none; cursor: pointer; appearance: auto; transition: border-color 0.2s;
         }
-        .tn-select option { background: #0f0d0a; color: #e8e0cc; }
-        .tn-select:focus { border-color: #c9a84c !important; border-bottom-color: #e8c97a !important; }
+        .tn-select option { background: #0b1020; color: #e8e0cc; }
+        .tn-select:focus { border-color: #6366f1 !important; border-bottom-color: #c4b5fd !important; }
 
         /* SUBMIT BUTTON */
         .tn-submit {
           width: 100%; padding: 16px;
           border: none;
-          background: linear-gradient(135deg, #a07832 0%, #c9a84c 40%, #e8c97a 70%, #c9a84c 100%);
+          background: linear-gradient(135deg, #ec4899 0%, #6366f1 40%, #c4b5fd 70%, #6366f1 100%);
           background-size: 200% auto;
-          color: #080705; font-family: "Playfair Display", serif;
+          color: #06070f; font-family: "Playfair Display", serif;
           font-size: 1.05rem; font-weight: 600; letter-spacing: 0.06em;
           cursor: pointer; transition: all 0.35s; position: relative; overflow: hidden;
         }
@@ -1116,31 +1228,31 @@ export default function TripNavigatorAI() {
           transform: translateX(-100%); transition: transform 0.5s ease;
         }
         .tn-submit:hover:not(:disabled)::before { transform: translateX(100%); }
-        .tn-submit:hover:not(:disabled) { background-position: right center; box-shadow: 0 8px 32px rgba(201,168,76,0.35); transform: translateY(-2px); }
+        .tn-submit:hover:not(:disabled) { background-position: right center; box-shadow: 0 8px 32px rgba(99,102,241,0.35); transform: translateY(-2px); }
         .tn-submit:active:not(:disabled) { transform: translateY(0px); }
-        .tn-submit:disabled { background: rgba(201,168,76,0.3); color: rgba(8,7,5,0.5); cursor: not-allowed; transform: none; }
+        .tn-submit:disabled { background: rgba(99,102,241,0.3); color: rgba(8,7,5,0.5); cursor: not-allowed; transform: none; }
 
         /* ACTION BUTTONS */
         .tn-action-btn {
-          padding: 11px 22px; border: 1px solid rgba(201,168,76,0.3);
-          background: rgba(201,168,76,0.06); color: #c9a84c;
+          padding: 11px 22px; border: 1px solid rgba(99,102,241,0.3);
+          background: rgba(99,102,241,0.06); color: #6366f1;
           font-family: "Jost", sans-serif; font-size: 12px; font-weight: 500;
           letter-spacing: 0.1em; text-transform: uppercase;
           cursor: pointer; transition: all 0.25s;
           clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
         }
-        .tn-action-btn:hover { background: rgba(201,168,76,0.15); border-color: #c9a84c; box-shadow: 0 4px 20px rgba(201,168,76,0.15); transform: translateY(-2px); }
+        .tn-action-btn:hover { background: rgba(99,102,241,0.15); border-color: #6366f1; box-shadow: 0 4px 20px rgba(99,102,241,0.15); transform: translateY(-2px); }
 
         /* DAY CARD */
         .tn-day-card {
           overflow: hidden; margin-bottom: 20px;
-          border: 1px solid rgba(201,168,76,0.15);
+          border: 1px solid rgba(99,102,241,0.15);
           background: rgba(10,8,5,0.95);
           box-shadow: 0 8px 32px rgba(0,0,0,0.4);
           transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
           animation: scaleIn 0.5s ease both;
         }
-        .tn-day-card:hover { border-color: rgba(201,168,76,0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 30px rgba(201,168,76,0.07); transform: translateY(-2px); }
+        .tn-day-card:hover { border-color: rgba(99,102,241,0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 30px rgba(99,102,241,0.07); transform: translateY(-2px); }
 
         .tn-day-img-wrap { position: relative; overflow: hidden; }
         .tn-day-img-wrap img {
@@ -1151,7 +1263,7 @@ export default function TripNavigatorAI() {
         .tn-day-card:hover .tn-day-img-wrap img { transform: scale(1.06); filter: brightness(0.62) saturate(0.8); }
         .tn-day-scan {
           position: absolute; inset: 0; pointer-events: none;
-          background: linear-gradient(to bottom, transparent 0%, rgba(201,168,76,0.07) 50%, transparent 100%);
+          background: linear-gradient(to bottom, transparent 0%, rgba(99,102,241,0.07) 50%, transparent 100%);
           transform: translateY(-100%);
         }
         .tn-day-card:hover .tn-day-scan { animation: scanLine 1.2s ease 0.1s both; }
@@ -1198,7 +1310,7 @@ export default function TripNavigatorAI() {
 
       {/* ══════════ HERO ══════════ */}
       <header className="tn-hero">
-        {BG.map((src, i) => (
+        {activeHeroImages.map((src, i) => (
           <div
             key={i}
             className="tn-hero-slide"
@@ -1228,7 +1340,7 @@ export default function TripNavigatorAI() {
               left: v.l,
               right: v.r,
               background:
-                "linear-gradient(to bottom,transparent,rgba(201,168,76,0.18),transparent)",
+                "linear-gradient(to bottom,transparent,rgba(99,102,241,0.18),transparent)",
               zIndex: 3,
               animation: `riseUp 2s ease ${v.d} both`,
             }}
@@ -1298,8 +1410,8 @@ export default function TripNavigatorAI() {
                 style={{
                   width: 46,
                   height: 46,
-                  background: "linear-gradient(135deg,#a07832,#0f0d0a)",
-                  border: "1px solid #a07832",
+                  background: "linear-gradient(135deg,#ec4899,#0b1020)",
+                  border: "1px solid #ec4899",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -1342,7 +1454,7 @@ export default function TripNavigatorAI() {
                   justifyContent: "flex-end",
                 }}
               >
-                <div style={{ flex: 1, minWidth: 200, maxWidth: 400 }}>
+                <div style={{ flex: 1, minWidth: 140, maxWidth: 400 }}>
                   <CurrencyDropdown
                     value={userCurrency}
                     onChange={setUserCurrency}
@@ -1355,10 +1467,10 @@ export default function TripNavigatorAI() {
                     padding: "12px 18px",
                     flexShrink: 0,
                     background: showConverter
-                      ? "rgba(201,168,76,0.18)"
+                      ? "rgba(99,102,241,0.18)"
                       : "transparent",
-                    border: "1px solid rgba(201,168,76,0.35)",
-                    color: "#c9a84c",
+                    border: "1px solid rgba(99,102,241,0.35)",
+                    color: "#6366f1",
                     fontFamily: "'Jost',sans-serif",
                     fontSize: 11,
                     fontWeight: 600,
@@ -1378,7 +1490,7 @@ export default function TripNavigatorAI() {
           {showConverter && (
             <div
               style={{
-                borderTop: "1px solid rgba(201,168,76,0.1)",
+                borderTop: "1px solid rgba(99,102,241,0.1)",
                 animation: "dropIn 0.25s ease both",
               }}
             >
@@ -1437,7 +1549,7 @@ export default function TripNavigatorAI() {
                         transform: "translateY(-50%)",
                         fontSize: 15,
                         pointerEvents: "none",
-                        color: "#a07832",
+                        color: "#ec4899",
                       }}
                     >
                       ⌖
@@ -1462,9 +1574,9 @@ export default function TripNavigatorAI() {
                         right: 8,
                         top: "50%",
                         transform: "translateY(-50%)",
-                        border: "1px solid rgba(201,168,76,0.35)",
-                        background: "rgba(201,168,76,0.12)",
-                        color: "#e8c97a",
+                        border: "1px solid rgba(99,102,241,0.35)",
+                        background: "rgba(99,102,241,0.12)",
+                        color: "#c4b5fd",
                         padding: "4px 8px",
                         fontSize: 10,
                         cursor: geoLoading ? "not-allowed" : "pointer",
@@ -1493,8 +1605,8 @@ export default function TripNavigatorAI() {
                             setShowSourceSuggestions(false);
                           }}
                           style={{
-                            border: "1px solid rgba(201,168,76,0.25)",
-                            background: "rgba(201,168,76,0.08)",
+                            border: "1px solid rgba(99,102,241,0.25)",
+                            background: "rgba(99,102,241,0.08)",
                             color: "rgba(232,224,204,0.9)",
                             fontSize: 10,
                             padding: "4px 8px",
@@ -1521,7 +1633,7 @@ export default function TripNavigatorAI() {
                         transform: "translateY(-50%)",
                         fontSize: 15,
                         pointerEvents: "none",
-                        color: "#a07832",
+                        color: "#ec4899",
                       }}
                     >
                       ◎
@@ -1536,6 +1648,173 @@ export default function TripNavigatorAI() {
                       }
                       style={{ ...fieldInput, paddingLeft: 38 }}
                     />
+                  </div>
+                </div>
+              </div>
+
+              <div className="field-animate" style={{ marginBottom: 16 }}>
+                <label style={fieldLabel}>Live Weather</label>
+                <div
+                  style={{
+                    border: "1px solid rgba(99,102,241,0.2)",
+                    background: "rgba(99,102,241,0.05)",
+                    padding: "12px 14px",
+                  }}
+                >
+                  {weatherLoading ? (
+                    <p
+                      style={{
+                        fontSize: 12,
+                        color: "#c4b5fd",
+                        marginBottom: 8,
+                        fontFamily: "'Jost',sans-serif",
+                      }}
+                    >
+                      Fetching real-time weather...
+                    </p>
+                  ) : weatherData ? (
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fit,minmax(140px,1fr))",
+                        gap: 8,
+                        marginBottom: 8,
+                      }}
+                    >
+                      <div>
+                        <p
+                          style={{
+                            fontSize: 10,
+                            color: "rgba(99,102,241,0.75)",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Location
+                        </p>
+                        <p style={{ fontSize: 13, color: "#f5eed8" }}>
+                          {weatherData.name}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: 10,
+                            color: "rgba(99,102,241,0.75)",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Temperature
+                        </p>
+                        <p style={{ fontSize: 13, color: "#f5eed8" }}>
+                          {Math.round(weatherData.main?.temp)}°C
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: 10,
+                            color: "rgba(99,102,241,0.75)",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Condition
+                        </p>
+                        <p style={{ fontSize: 13, color: "#f5eed8" }}>
+                          {formatWeatherCondition(weatherData)}
+                        </p>
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: 10,
+                            color: "rgba(99,102,241,0.75)",
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Humidity
+                        </p>
+                        <p style={{ fontSize: 13, color: "#f5eed8" }}>
+                          {weatherData.main?.humidity}%
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p
+                      style={{
+                        fontSize: 12,
+                        color: "rgba(232,224,204,0.6)",
+                        marginBottom: 8,
+                        fontFamily: "'Jost',sans-serif",
+                      }}
+                    >
+                      Enter destination to auto-load weather, or use your
+                      current location.
+                    </p>
+                  )}
+
+                  {weatherError && (
+                    <p
+                      style={{
+                        fontSize: 12,
+                        color: "#fca5a5",
+                        marginBottom: 8,
+                        fontFamily: "'Jost',sans-serif",
+                      }}
+                    >
+                      {weatherError}
+                    </p>
+                  )}
+
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      onClick={() => fetchWeatherByCity(form.destination)}
+                      disabled={weatherLoading || !form.destination.trim()}
+                      style={{
+                        border: "1px solid rgba(99,102,241,0.35)",
+                        background: "rgba(99,102,241,0.12)",
+                        color: "#c4b5fd",
+                        padding: "6px 10px",
+                        fontSize: 10,
+                        cursor:
+                          weatherLoading || !form.destination.trim()
+                            ? "not-allowed"
+                            : "pointer",
+                        fontFamily: "'Jost',sans-serif",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Check Destination Weather
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleUseMyLocation}
+                      disabled={geoLoading || weatherLoading}
+                      style={{
+                        border: "1px solid rgba(99,102,241,0.35)",
+                        background: "transparent",
+                        color: "rgba(232,224,204,0.85)",
+                        padding: "6px 10px",
+                        fontSize: 10,
+                        cursor:
+                          geoLoading || weatherLoading
+                            ? "not-allowed"
+                            : "pointer",
+                        fontFamily: "'Jost',sans-serif",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {geoLoading
+                        ? "Locating..."
+                        : "Use Current Location Weather"}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1729,7 +2008,7 @@ export default function TripNavigatorAI() {
                         width: 18,
                         height: 18,
                         border: "2.5px solid rgba(8,7,5,0.3)",
-                        borderTopColor: "#080705",
+                        borderTopColor: "#06070f",
                         borderRadius: "50%",
                         display: "inline-block",
                         animation: "spin 0.8s linear infinite",
@@ -1771,7 +2050,7 @@ export default function TripNavigatorAI() {
               <div
                 style={{
                   background: "rgba(9,8,6,0.95)",
-                  border: "1px solid rgba(201,168,76,0.2)",
+                  border: "1px solid rgba(99,102,241,0.2)",
                   padding: "20px 22px",
                   marginBottom: 20,
                   boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
@@ -1780,7 +2059,7 @@ export default function TripNavigatorAI() {
                 <h3
                   style={{
                     marginBottom: 8,
-                    color: "#e8c97a",
+                    color: "#c4b5fd",
                     fontFamily: "'Playfair Display',serif",
                     fontSize: "1.25rem",
                   }}
@@ -1799,7 +2078,7 @@ export default function TripNavigatorAI() {
                 </p>
 
                 {bookingLoading && (
-                  <div style={{ color: "#e8c97a", fontSize: 12 }}>
+                  <div style={{ color: "#c4b5fd", fontSize: 12 }}>
                     Loading booking options...
                   </div>
                 )}
@@ -1830,7 +2109,7 @@ export default function TripNavigatorAI() {
                         key={title}
                         style={{
                           background: "rgba(255,255,255,0.05)",
-                          border: "1px solid rgba(201,168,76,0.2)",
+                          border: "1px solid rgba(99,102,241,0.2)",
                           padding: "12px",
                         }}
                       >
@@ -1863,12 +2142,12 @@ export default function TripNavigatorAI() {
                               style={{
                                 display: "block",
                                 textDecoration: "none",
-                                color: "#e8c97a",
+                                color: "#c4b5fd",
                                 fontSize: 12,
                                 marginBottom: 6,
-                                border: "1px solid rgba(201,168,76,0.25)",
+                                border: "1px solid rgba(99,102,241,0.25)",
                                 padding: "6px 8px",
-                                background: "rgba(201,168,76,0.08)",
+                                background: "rgba(99,102,241,0.08)",
                               }}
                             >
                               {item.provider}
@@ -1895,7 +2174,7 @@ export default function TripNavigatorAI() {
                       : BC.within
                         ? "linear-gradient(135deg,rgba(8,35,18,0.95),rgba(6,120,80,0.85))"
                         : "linear-gradient(135deg,rgba(40,20,5,0.95),rgba(180,100,20,0.85))",
-                    border: `1px solid ${BC.over ? "rgba(220,38,38,0.35)" : BC.within ? "rgba(6,120,80,0.35)" : "rgba(201,168,76,0.35)"}`,
+                    border: `1px solid ${BC.over ? "rgba(220,38,38,0.35)" : BC.within ? "rgba(6,120,80,0.35)" : "rgba(99,102,241,0.35)"}`,
                     boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
                     animation: "scaleIn 0.5s ease both",
                   }}
@@ -1968,7 +2247,7 @@ export default function TripNavigatorAI() {
                           fontFamily: "'Playfair Display',serif",
                           fontSize: "1.5rem",
                           fontWeight: 400,
-                          color: "#e8c97a",
+                          color: "#c4b5fd",
                         }}
                       >
                         {form.budget}
@@ -2052,13 +2331,13 @@ export default function TripNavigatorAI() {
                   overflow: "hidden",
                   marginBottom: 20,
                   minHeight: 220,
-                  border: "1px solid rgba(201,168,76,0.2)",
+                  border: "1px solid rgba(99,102,241,0.2)",
                   boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
                   animation: "scaleIn 0.5s ease 0.1s both",
                 }}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1400&q=85&auto=format&fit=crop"
+                  src={activeDestinationImages[0] || activeHeroImages[0]}
                   alt="Travel map"
                   style={{
                     position: "absolute",
@@ -2118,12 +2397,12 @@ export default function TripNavigatorAI() {
                       <span
                         key={tag}
                         style={{
-                          background: "rgba(201,168,76,0.14)",
-                          border: "1px solid rgba(201,168,76,0.3)",
+                          background: "rgba(99,102,241,0.14)",
+                          border: "1px solid rgba(99,102,241,0.3)",
                           padding: "6px 14px",
                           fontSize: 12,
                           fontWeight: 500,
-                          color: "#e8c97a",
+                          color: "#c4b5fd",
                           fontFamily: "'Jost',sans-serif",
                           letterSpacing: "0.04em",
                         }}
@@ -2140,7 +2419,7 @@ export default function TripNavigatorAI() {
                 <div
                   style={{
                     background: "rgba(10,8,5,0.95)",
-                    border: "1px solid rgba(201,168,76,0.15)",
+                    border: "1px solid rgba(99,102,241,0.15)",
                     padding: "24px 26px",
                     marginBottom: 20,
                     animation: "scaleIn 0.5s ease 0.15s both",
@@ -2220,7 +2499,7 @@ export default function TripNavigatorAI() {
                         <div
                           style={{
                             height: 5,
-                            background: "rgba(201,168,76,0.08)",
+                            background: "rgba(99,102,241,0.08)",
                             overflow: "hidden",
                           }}
                         >
@@ -2230,7 +2509,7 @@ export default function TripNavigatorAI() {
                               width: `${Math.min(p, 100)}%`,
                               background: ov
                                 ? "linear-gradient(90deg,#dc2626,#f97316)"
-                                : "linear-gradient(90deg,#a07832,#c9a84c)",
+                                : "linear-gradient(90deg,#ec4899,#6366f1)",
                               transition: "width 1s ease",
                             }}
                           />
@@ -2241,7 +2520,7 @@ export default function TripNavigatorAI() {
                   <div
                     className="spsum"
                     style={{
-                      borderTop: "1px solid rgba(201,168,76,0.1)",
+                      borderTop: "1px solid rgba(99,102,241,0.1)",
                       paddingTop: 16,
                       marginTop: 6,
                       display: "grid",
@@ -2260,7 +2539,7 @@ export default function TripNavigatorAI() {
                         "#f87171",
                         Math.max(...BC.days.map((d) => d.conv)),
                       ],
-                      ["Average Day", "#e8c97a", BC.avg],
+                      ["Average Day", "#c4b5fd", BC.avg],
                     ].map(([l, c, v]) => (
                       <div key={l} style={{ textAlign: "center" }}>
                         <p
@@ -2303,7 +2582,12 @@ export default function TripNavigatorAI() {
                 >
                   <div className="tn-day-img-wrap" style={{ height: 250 }}>
                     <img
-                      src={day.image || DAY_BG[i % DAY_BG.length]}
+                      src={
+                        day.image ||
+                        activeDestinationImages[
+                          i % activeDestinationImages.length
+                        ]
+                      }
                       alt={day.title}
                       onError={(e) => {
                         e.target.src = DAY_BG[i % DAY_BG.length];
@@ -2323,8 +2607,8 @@ export default function TripNavigatorAI() {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        background: "#c9a84c",
-                        color: "#080705",
+                        background: "#6366f1",
+                        color: "#06070f",
                         padding: "6px 18px 6px 14px",
                         fontSize: 10,
                         fontWeight: 700,
@@ -2347,8 +2631,8 @@ export default function TripNavigatorAI() {
                         padding: "7px 16px",
                         fontSize: 12,
                         fontWeight: 600,
-                        color: "#e8c97a",
-                        border: "1px solid rgba(201,168,76,0.3)",
+                        color: "#c4b5fd",
+                        border: "1px solid rgba(99,102,241,0.3)",
                         fontFamily: "'Jost',sans-serif",
                       }}
                     >
@@ -2410,18 +2694,24 @@ export default function TripNavigatorAI() {
                   {
                     title: "◈ Pack Essentials",
                     items: itinerary.packingTips || [],
-                    img: "https://images.unsplash.com/photo-1553531889-e6cf4d692b1b?w=800&q=80&auto=format&fit=crop",
+                    img:
+                      activeDestinationImages[1] ||
+                      activeHeroImages[1] ||
+                      BG[1],
                   },
                   {
                     title: "◎ Local Know-How",
                     items: itinerary.localTips || [],
-                    img: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80&auto=format&fit=crop",
+                    img:
+                      activeDestinationImages[2] ||
+                      activeHeroImages[2] ||
+                      BG[2],
                   },
                 ].map((card) => (
                   <div
                     key={card.title}
                     style={{
-                      border: "1px solid rgba(201,168,76,0.15)",
+                      border: "1px solid rgba(99,102,241,0.15)",
                       overflow: "hidden",
                     }}
                   >
@@ -2487,9 +2777,9 @@ export default function TripNavigatorAI() {
                             gap: 10,
                             fontSize: 12,
                             color: "rgba(232,224,204,0.45)",
-                            background: "rgba(201,168,76,0.04)",
+                            background: "rgba(99,102,241,0.04)",
                             padding: "9px 12px",
-                            borderLeft: "2px solid rgba(201,168,76,0.2)",
+                            borderLeft: "2px solid rgba(99,102,241,0.2)",
                             alignItems: "flex-start",
                             fontFamily: "'Jost',sans-serif",
                             fontWeight: 300,
@@ -2497,7 +2787,7 @@ export default function TripNavigatorAI() {
                         >
                           <span
                             style={{
-                              color: "#c9a84c",
+                              color: "#6366f1",
                               flexShrink: 0,
                               fontSize: 10,
                               marginTop: 2,
@@ -2562,3 +2852,5 @@ export default function TripNavigatorAI() {
     </div>
   );
 }
+
+

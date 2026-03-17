@@ -11,6 +11,7 @@ import itineraryRoutes from "./routes/itineraryRoutes.js";
 import feedbackRoutes from "./routes/feedbackRoutes.js";
 import bookingsRoutes from "./routes/bookingsRoutes.js";
 import ragRoutes from "./routes/ragRoutes.js";
+import budgetRoutes from "./routes/budgetRoutes.js";
 import { authenticateToken } from "./middleware/auth.js";
 import { generateItineraryLimiter } from "./middleware/rateLimit.js";
 import {
@@ -23,6 +24,10 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const OPENWEATHER_API_KEY =
+  process.env.OPENWEATHER_API_KEY ||
+  process.env.WEATHER_API_KEY ||
+  process.env.VITE_OPENWEATHER_API_KEY;
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
@@ -40,6 +45,82 @@ app.get("/api/health", (req, res) => {
 
 app.get("/api/itineraries/test", (req, res) => {
   res.json({ status: "ok", message: "Itinerary routes are accessible" });
+});
+
+/* =========================
+   WEATHER API (SERVER-SIDE KEY)
+========================= */
+app.get("/api/weather", async (req, res) => {
+  const city = String(req.query.city || "").trim();
+
+  if (!city) {
+    return res.status(400).json({ error: "City query is required" });
+  }
+
+  if (!OPENWEATHER_API_KEY) {
+    return res
+      .status(500)
+      .json({ error: "Missing OPENWEATHER_API_KEY on server" });
+  }
+
+  try {
+    const response = await axios.get(
+      "https://api.openweathermap.org/data/2.5/weather",
+      {
+        params: {
+          q: city,
+          units: "metric",
+          appid: OPENWEATHER_API_KEY,
+        },
+        timeout: 10000,
+      },
+    );
+
+    return res.json(response.data);
+  } catch (error) {
+    const status = error?.response?.status || 500;
+    const message =
+      error?.response?.data?.message || "Failed to fetch weather data";
+    return res.status(status).json({ error: message });
+  }
+});
+
+app.get("/api/weather/current", async (req, res) => {
+  const lat = Number(req.query.lat);
+  const lon = Number(req.query.lon);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    return res.status(400).json({ error: "Valid lat and lon are required" });
+  }
+
+  if (!OPENWEATHER_API_KEY) {
+    return res
+      .status(500)
+      .json({ error: "Missing OPENWEATHER_API_KEY on server" });
+  }
+
+  try {
+    const response = await axios.get(
+      "https://api.openweathermap.org/data/2.5/weather",
+      {
+        params: {
+          lat,
+          lon,
+          units: "metric",
+          appid: OPENWEATHER_API_KEY,
+        },
+        timeout: 10000,
+      },
+    );
+
+    return res.json(response.data);
+  } catch (error) {
+    const status = error?.response?.status || 500;
+    const message =
+      error?.response?.data?.message ||
+      "Failed to fetch current location weather";
+    return res.status(status).json({ error: message });
+  }
 });
 
 /* =========================
@@ -65,6 +146,12 @@ console.log("✅ Feedback routes loaded");
 ========================= */
 app.use("/api/bookings", bookingsRoutes);
 console.log("✅ Booking routes loaded");
+
+/* =========================
+  BUDGET ROUTES
+========================= */
+app.use("/api/budget", budgetRoutes);
+console.log("✅ Budget routes loaded");
 
 /* =========================
   RAG ROUTES
@@ -708,7 +795,7 @@ app.get("/health", (req, res) => {
 /* =========================
    START SERVER
 ========================= */
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`🔐 Auth endpoints: http://localhost:${PORT}/api/auth/...`);
   console.log(
@@ -727,4 +814,16 @@ app.listen(PORT, () => {
     );
     console.warn("Get free Pexels key: https://www.pexels.com/api/\n");
   }
+});
+
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(
+      `❌ Port ${PORT} is already in use. Stop the existing backend process before starting another one.`,
+    );
+    process.exit(1);
+  }
+
+  console.error("❌ Server startup failed:", error.message);
+  process.exit(1);
 });
