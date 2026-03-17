@@ -3,6 +3,7 @@ import { saveItinerary } from "../api/itineraryAPI";
 import { searchBookings } from "../api/bookingsAPI";
 import { getDestinationImages } from "../api/unsplash";
 import { getCurrentWeather, getWeather } from "../api/Weather";
+import { apiUrl } from "../api/config";
 
 /* ═══════════════════════════════════════════════════════
    CURRENCY DATA
@@ -866,7 +867,7 @@ export default function TripNavigatorAI() {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Please login to generate an itinerary");
-      const res = await fetch("http://localhost:5000/api/generate-itinerary", {
+      const res = await fetch(apiUrl("/api/generate-itinerary"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -2852,5 +2853,3 @@ export default function TripNavigatorAI() {
     </div>
   );
 }
-
-

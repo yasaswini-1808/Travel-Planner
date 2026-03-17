@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { apiUrl } from "../api/config";
 
 /* ═══════════════════════════════════════════════════════════
    CONSTANTS & DATA
@@ -988,7 +989,7 @@ export default function Feedback() {
 
     try {
       const body = JSON.stringify({ ...form, rating, categories, reaction });
-      const res = await fetch("/api/feedback", {
+      const res = await fetch(apiUrl("/api/feedback"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body,
@@ -1001,7 +1002,7 @@ export default function Feedback() {
           data = JSON.parse(raw);
         } catch {
           throw new Error(
-            "Server returned a non-JSON response. Make sure backend is running on http://localhost:5000.",
+            "Server returned a non-JSON response. Check your backend deployment and API URL.",
           );
         }
       }

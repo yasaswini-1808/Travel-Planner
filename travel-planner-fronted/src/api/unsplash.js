@@ -1,12 +1,12 @@
 // frontend/src/api/unsplash.js
+import { apiUrl } from "./config";
 
 export const getDestinationImages = async (destination) => {
   try {
     console.log("🖼️ Fetching images for:", destination);
 
-    // ✅ IMPORTANT: Full URL to backend server
     const res = await fetch(
-      `http://localhost:5000/api/images/${encodeURIComponent(destination)}`,
+      apiUrl(`/api/images/${encodeURIComponent(destination)}`),
     );
 
     if (!res.ok) {

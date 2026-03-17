@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { apiUrl } from "../api/config";
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -31,7 +32,7 @@ function Users() {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/auth/users", {
+      const response = await fetch(apiUrl("/api/auth/users"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

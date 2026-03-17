@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../assets/styles/auth.css";
+import { apiUrl } from "../api/config";
 
-const API_BASE_URL = "http://localhost:5000/api/auth";
+const API_BASE_URL = apiUrl("/api/auth");
 
 const ForgotPassword = () => {
   const navigate = useNavigate();

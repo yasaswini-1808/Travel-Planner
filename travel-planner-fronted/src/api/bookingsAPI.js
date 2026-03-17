@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:5000/api/bookings";
+import { apiUrl } from "./config";
+
+const API_BASE_URL = apiUrl("/api/bookings");
 
 const getAuthToken = () => localStorage.getItem("token");
 

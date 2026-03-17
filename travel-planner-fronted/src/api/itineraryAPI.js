@@ -1,5 +1,7 @@
 // api/itineraryAPI.js - Frontend API calls for itineraries
-const API_BASE_URL = "http://localhost:5000/api/itineraries";
+import { apiUrl } from "./config";
+
+const API_BASE_URL = apiUrl("/api/itineraries");
 
 // Get auth token from localStorage
 const getAuthToken = () => {
@@ -43,7 +45,7 @@ export const saveItinerary = async (itineraryData) => {
         text.substring(0, 500),
       );
       throw new Error(
-        `Server returned HTML instead of JSON. Status: ${response.status}. This usually means the backend server isn't running on port 5000.`,
+        `Server returned HTML instead of JSON. Status: ${response.status}. This usually means the backend URL is incorrect or backend is unavailable.`,
       );
     }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../assets/styles/auth.css";
+import { apiUrl } from "../api/config";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(apiUrl("/api/auth/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +135,7 @@ const Auth = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+      const response = await fetch(apiUrl("/api/auth/register"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

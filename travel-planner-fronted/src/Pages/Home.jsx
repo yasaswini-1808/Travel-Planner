@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import { ContinentsSection } from "../components/ContinentsSection";
 import "../assets/styles/global.css";
+import { apiUrl } from "../api/config";
 
 /* ═══════════════════════════════════════════
    GOLD DUST PARTICLE CANVAS
@@ -393,7 +394,9 @@ export default function Home() {
       async ({ coords }) => {
         try {
           const response = await fetch(
-            `/api/weather/current?lat=${coords.latitude}&lon=${coords.longitude}`,
+            apiUrl(
+              `/api/weather/current?lat=${coords.latitude}&lon=${coords.longitude}`,
+            ),
           );
 
           let payload = null;

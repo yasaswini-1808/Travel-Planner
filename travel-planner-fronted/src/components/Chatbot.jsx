@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import { askLlama } from "../api/llama";
+import { apiUrl } from "../api/config";
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -97,7 +98,7 @@ const Chatbot = () => {
       if (destinationMatch) {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/images/${encodeURIComponent(destinationMatch)}`,
+            apiUrl(`/api/images/${encodeURIComponent(destinationMatch)}`),
           );
           const data = await response.json();
 
