@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 const Footer = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
   const [hoveredSocial, setHoveredSocial] = useState(null);
 
   const footerLinks = {
@@ -34,10 +32,6 @@ const Footer = () => {
     { name: "Instagram", icon: "◈", url: "#", color: "#EC4899" },
     { name: "LinkedIn", icon: "in", url: "#", color: "#06B6D4" },
   ];
-
-  const handleSubscribe = () => {
-    if (email.includes("@")) setSubscribed(true);
-  };
 
   return (
     <footer
@@ -75,25 +69,6 @@ const Footer = () => {
           transform: translateY(-3px);
         }
 
-        .ft-input {
-          flex: 1; padding: 13px 18px;
-          background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 12px; color: #E8E4DC;
-          font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
-          transition: border-color 0.2s ease, background 0.2s ease;
-        }
-        .ft-input::placeholder { color: rgba(255,255,255,0.25); }
-        .ft-input:focus { border-color: rgba(99,102,241,0.5); background: rgba(255,255,255,0.08); }
-
-        .ft-sub-btn {
-          padding: 13px 28px; border-radius: 12px; border: none; cursor: pointer;
-          font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
-          background: linear-gradient(135deg, #6366F1, #8B5CF6); color: #fff;
-          transition: all 0.25s ease; white-space: nowrap;
-          box-shadow: 0 4px 20px rgba(99,102,241,0.4);
-        }
-        .ft-sub-btn:hover { transform: scale(1.04); box-shadow: 0 6px 28px rgba(99,102,241,0.6); }
-
         .ft-bottom-link {
           background: none; border: none; cursor: pointer; padding: 0;
           font-family: 'DM Sans', sans-serif; font-size: 12px;
@@ -112,7 +87,6 @@ const Footer = () => {
           .ft-main-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
           .ft-links-grid { grid-template-columns: repeat(2,1fr) !important; }
           .ft-bottom-row { flex-direction: column !important; gap: 12px !important; text-align: center; }
-          .ft-newsletter-row { flex-direction: column !important; }
           .ft-wrap { padding: 60px 20px 40px !important; }
         }
         @media(max-width:480px){
@@ -266,57 +240,6 @@ const Footer = () => {
                   {s.icon}
                 </a>
               ))}
-            </div>
-
-            {/* Newsletter */}
-            <div>
-              <div className="ft-col-title">Stay Updated</div>
-              <p
-                style={{
-                  fontSize: 13,
-                  color: "rgba(255,255,255,0.35)",
-                  fontFamily: "'DM Sans',sans-serif",
-                  marginBottom: 14,
-                }}
-              >
-                Travel tips, exclusive deals, and destination inspiration —
-                straight to your inbox.
-              </p>
-              {subscribed ? (
-                <div
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "12px 20px",
-                    borderRadius: 12,
-                    background: "rgba(16,185,129,0.1)",
-                    border: "1px solid rgba(16,185,129,0.3)",
-                    color: "#34D399",
-                    fontSize: 13,
-                    fontWeight: 600,
-                  }}
-                >
-                  ✓ You're subscribed — thanks!
-                </div>
-              ) : (
-                <div
-                  className="ft-newsletter-row"
-                  style={{ display: "flex", gap: 10 }}
-                >
-                  <input
-                    className="ft-input"
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSubscribe()}
-                  />
-                  <button className="ft-sub-btn" onClick={handleSubscribe}>
-                    Subscribe
-                  </button>
-                </div>
-              )}
             </div>
           </div>
 

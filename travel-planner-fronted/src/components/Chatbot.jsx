@@ -270,6 +270,16 @@ const Chatbot = () => {
         .slick-dots li.slick-active button:before {
           color: #2563eb !important;
         }
+
+        .chat-input {
+          color: #1e293b !important;
+          caret-color: #4f46e5;
+        }
+
+        .chat-input::placeholder {
+          color: #94a3b8 !important;
+          opacity: 1;
+        }
       `}</style>
 
       {/* Floating Button - Matches Header Style */}
@@ -711,6 +721,7 @@ const Chatbot = () => {
           >
             <div style={{ display: "flex", gap: 12 }}>
               <input
+                className="chat-input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) =>
@@ -728,6 +739,7 @@ const Chatbot = () => {
                   fontWeight: 500,
                   transition: "all 0.3s",
                   background: "#f8fafc",
+                  color: "#1e293b",
                 }}
                 onFocus={(e) => {
                   e.target.style.borderColor = "#4f46e5";

@@ -113,12 +113,14 @@ export const CountryInfo = ({ country, isOpen, onClose }) => {
               e.currentTarget.src = FALLBACK_IMG;
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent pointer-events-none" />
 
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-[#121529]/90 hover:bg-[#171b33] text-indigo-100 rounded-full p-2 transition border border-indigo-300/35"
+            className="absolute top-4 right-4 z-20 bg-[#121529]/90 hover:bg-[#171b33] text-indigo-100 rounded-full p-2 transition border border-indigo-300/35"
+            style={{ pointerEvents: "auto" }}
+            aria-label="Close country info"
           >
             <svg
               className="w-6 h-6"
@@ -136,7 +138,7 @@ export const CountryInfo = ({ country, isOpen, onClose }) => {
           </button>
 
           {/* Country Title Overlay */}
-          <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+          <div className="absolute inset-0 flex flex-col justify-end p-6 text-white pointer-events-none">
             <h1 className="text-5xl font-bold mb-2">{country}</h1>
             <p className="text-lg text-gray-100">{safeRegion}</p>
             <div className="mt-3 inline-flex w-fit items-center rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 px-3 py-1 text-xs font-semibold text-white">
