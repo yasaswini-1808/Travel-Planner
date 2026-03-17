@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Suspense, lazy } from "react";
+import { Component, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,9 +8,52 @@ import {
   useLocation,
 } from "react-router-dom";
 import Header from "./components/Header";
-import Chatbot from "./components/Chatbot"; // Import Chatbot
 import ProtectedRoute from "./components/ProtectedRoute";
 import { TravelProvider } from "./context/TravelContext";
+
+class AppErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("App runtime error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#eef2ff",
+            background: "#06070f",
+            textAlign: "center",
+            padding: "24px",
+            fontFamily: "Outfit, sans-serif",
+          }}
+        >
+          <div>
+            <h2 style={{ marginBottom: "10px" }}>Something went wrong</h2>
+            <p style={{ opacity: 0.75 }}>
+              Please refresh this page. If it continues, open browser console.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 const Landing = lazy(() => import("./Pages/Landing"));
 const Home = lazy(() => import("./Pages/Home"));
@@ -29,6 +72,7 @@ const TravelPreferences = lazy(() => import("./Pages/TravelPreferences"));
 const WeatherApp = lazy(() => import("./components/Weather"));
 const Users = lazy(() => import("./Pages/Users"));
 const NotFound = lazy(() => import("./Pages/NotFound"));
+const Chatbot = lazy(() => import("./components/Chatbot"));
 
 function RouteFallback() {
   return (
@@ -178,18 +222,24 @@ function AppContent() {
       </div>
 
       {/* Chatbot - Only show when logged in and not on auth/landing pages */}
-      {isLoggedIn && !isAuthPage && !isLandingPage && <Chatbot />}
+      {isLoggedIn && !isAuthPage && !isLandingPage && (
+        <Suspense fallback={null}>
+          <Chatbot />
+        </Suspense>
+      )}
     </div>
   );
 }
 
 function App() {
   return (
-    <TravelProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </TravelProvider>
+    <AppErrorBoundary>
+      <TravelProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </TravelProvider>
+    </AppErrorBoundary>
   );
 }
 
