@@ -10,7 +10,7 @@ import {
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { TravelProvider } from "./context/TravelContext";
-
+import React from "react";
 class AppErrorBoundary extends Component {
   constructor(props) {
     super(props);
