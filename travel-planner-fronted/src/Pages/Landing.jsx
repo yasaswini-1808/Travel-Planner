@@ -41,7 +41,7 @@ const Landing = () => {
     },
     {
       icon: "🌤️",
-      bg: "https://images.unsplash.com/photo-1504608524841-42584120d693?w=600&q=80",
+      bg: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=600&q=80",
       gradient: "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
       title: "Real-Time Weather",
       description:
@@ -704,13 +704,11 @@ const Landing = () => {
 
       {/* ── HERO ── */}
       <section className="hero" ref={heroRef} style={{ "--scroll": scrollY }}>
-        {heroSlides.map((slide, i) => (
-          <div
-            key={i}
-            className={`hero-slide ${i === activeSlide ? "active" : ""}`}
-            style={{ backgroundImage: `url('${slide.url}')` }}
-          />
-        ))}
+        <div
+          key={heroSlides[activeSlide].url}
+          className="hero-slide active"
+          style={{ backgroundImage: `url('${heroSlides[activeSlide].url}')` }}
+        />
         <div className="hero-overlay" />
 
         <div className="hero-content">
@@ -869,7 +867,7 @@ const Landing = () => {
               label: "Tokyo",
             },
             {
-              url: "https://images.unsplash.com/photo-1550986922-de3a9bf6aa24?w=600&q=80",
+              url: "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=600&q=80",
               label: "Maldives",
             },
             {

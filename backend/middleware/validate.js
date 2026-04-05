@@ -15,21 +15,28 @@ export const validateBody = (schema) => (req, res, next) => {
   next();
 };
 
-export const authRegisterSchema = z.object({
-  username: z
-    .string({ required_error: "Username is required" })
-    .trim()
-    .min(3, "Username must be at least 3 characters")
-    .max(30, "Username must be at most 30 characters"),
-  email: z
-    .string({ required_error: "Email is required" })
-    .trim()
-    .email("Please provide a valid email address"),
-  password: z
-    .string({ required_error: "Password is required" })
-    .min(6, "Password must be at least 6 characters long"),
-  fullName: z.string().trim().max(100).optional().or(z.literal("")),
-});
+export const authRegisterSchema = z
+  .object({
+    username: z
+      .string({ required_error: "Username is required" })
+      .trim()
+      .min(3, "Username must be at least 3 characters")
+      .max(30, "Username must be at most 30 characters"),
+    email: z
+      .string({ required_error: "Email is required" })
+      .trim()
+      .email("Please provide a valid email address"),
+    password: z
+      .string({ required_error: "Password is required" })
+      .min(6, "Password must be at least 6 characters long"),
+    fullName: z.string().trim().max(100).optional().or(z.literal("")),
+    role: z.enum(["user", "admin"]).optional(),
+  })
+  .refine((data) => data.role !== "admin", {
+    message:
+      "Admin accounts cannot be created from sign up. Please contact an existing admin.",
+    path: ["role"],
+  });
 
 export const authLoginSchema = z.object({
   email: z

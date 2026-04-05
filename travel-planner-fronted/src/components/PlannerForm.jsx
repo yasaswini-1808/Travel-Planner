@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { saveItinerary } from "../api/itineraryAPI";
 import { searchBookings } from "../api/bookingsAPI";
 import { getDestinationImages } from "../api/unsplash";
@@ -646,6 +647,7 @@ const fieldInput = {
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════ */
 export default function TripNavigatorAI() {
+  const navigate = useNavigate();
   const [bgIdx, setBgIdx] = useState(0);
   const [heroImages, setHeroImages] = useState([]);
   const [destinationImages, setDestinationImages] = useState([]);
@@ -2827,6 +2829,10 @@ export default function TripNavigatorAI() {
                       navigator.clipboard
                         .writeText(JSON.stringify(itinerary, null, 2))
                         .then(() => alert("✅ Copied!")),
+                  },
+                  {
+                    l: "✦ Give Feedback",
+                    fn: () => navigate("/feedback"),
                   },
                   {
                     l: "↺ Plan Another",

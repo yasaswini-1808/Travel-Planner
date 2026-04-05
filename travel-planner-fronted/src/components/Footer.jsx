@@ -20,6 +20,7 @@ const Footer = () => {
     ],
     Support: [
       { name: "Help Center", path: "/help" },
+      { name: "Share Feedback", path: "/feedback" },
       { name: "Terms of Service", path: "/terms" },
       { name: "Privacy Policy", path: "/privacy" },
       { name: "FAQs", path: "/faqs" },
@@ -27,10 +28,37 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { name: "Twitter / X", icon: "𝕏", url: "#", color: "#E8E4DC" },
-    { name: "Facebook", icon: "f", url: "#", color: "#3B82F6" },
-    { name: "Instagram", icon: "◈", url: "#", color: "#EC4899" },
-    { name: "LinkedIn", icon: "in", url: "#", color: "#06B6D4" },
+    {
+      name: "Twitter / X",
+      icon: "X",
+      url: "https://x.com/Tripadvisor",
+      color: "#E8E4DC",
+    },
+    {
+      name: "Facebook",
+      icon: "F",
+      url: "https://www.facebook.com/Tripadvisor",
+      color: "#3B82F6",
+    },
+    {
+      name: "Instagram",
+      icon: "IG",
+      url: "https://www.instagram.com/tripadvisor",
+      color: "#EC4899",
+    },
+
+    {
+      name: "YouTube",
+      icon: "YT",
+      url: "https://www.youtube.com/@Tripadvisor",
+      color: "#EF4444",
+    },
+    {
+      name: "Pinterest",
+      icon: "P",
+      url: "https://www.pinterest.com/travel",
+      color: "#E11D48",
+    },
   ];
 
   return (
@@ -223,6 +251,8 @@ const Footer = () => {
                 <a
                   key={i}
                   href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="ft-social"
                   aria-label={s.name}
                   onMouseEnter={() => setHoveredSocial(i)}

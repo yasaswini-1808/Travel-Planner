@@ -7,6 +7,7 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
+import React from "react";
 import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { TravelProvider } from "./context/TravelContext";
@@ -235,7 +236,12 @@ function App() {
   return (
     <AppErrorBoundary>
       <TravelProvider>
-        <Router>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
           <AppContent />
         </Router>
       </TravelProvider>

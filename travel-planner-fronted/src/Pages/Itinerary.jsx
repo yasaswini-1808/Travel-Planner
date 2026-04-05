@@ -35,6 +35,21 @@ const Itinerary = () => {
         <p>
           <b>Dietary Preferences:</b> {state.dietary.join(", ") || "None"}
         </p>
+
+        <div className="d-flex flex-wrap gap-2 mt-3">
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/feedback")}
+          >
+            Share Feedback
+          </button>
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => navigate("/planner")}
+          >
+            Plan Another Trip
+          </button>
+        </div>
       </div>
     </div>
   );

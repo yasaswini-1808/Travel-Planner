@@ -1001,25 +1001,21 @@ export default function Feedback() {
         try {
           data = JSON.parse(raw);
         } catch {
-          throw new Error(
-            "Server returned a non-JSON response. Check your backend deployment and API URL.",
-          );
+          if (!res.ok) {
+            throw new Error(
+              `Feedback API failed (HTTP ${res.status}). Please check backend logs.`,
+            );
+          }
         }
       }
 
       if (!res.ok) throw new Error(data.error || "Failed to submit feedback.");
       setSubmitted(true);
     } catch (err) {
-      // Show success in demo/offline mode — bug fix: check message more robustly
-      if (
-        !err.message ||
-        err.message === "Failed to fetch" ||
-        err instanceof TypeError
-      ) {
-        setSubmitted(true);
-      } else {
-        setApiError(err.message || "Something went wrong. Please try again.");
-      }
+      setApiError(
+        err?.message ||
+          "Could not submit feedback. Ensure backend is running on port 5000.",
+      );
     } finally {
       setIsLoading(false);
     }

@@ -65,6 +65,13 @@ router.post("/", async (req, res) => {
       },
     });
   } catch (error) {
+    if (error?.code === 11000 && error?.keyPattern?.email) {
+      return res.status(409).json({
+        error:
+          "Feedback with this email already exists. Use a different email or update the existing feedback.",
+      });
+    }
+
     if (error.name === "ValidationError") {
       return res.status(400).json({
         error: Object.values(error.errors)

@@ -28,8 +28,10 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.FRONTEND_ORIGIN,
   "http://localhost:5173",
+  "http://localhost:5174",
   "http://localhost:3000",
 ].filter(Boolean);
+const localhostPattern = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/;
 const OPENWEATHER_API_KEY =
   process.env.OPENWEATHER_API_KEY ||
   process.env.WEATHER_API_KEY ||
@@ -45,7 +47,8 @@ app.use(
       // Allow non-browser clients and same-origin server calls without an Origin header.
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error("Not allowed by CORS"));
+      if (localhostPattern.test(origin)) return callback(null, true);
+      return callback(null, false);
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

@@ -9,7 +9,6 @@ export default function Header() {
     { name: "Home", path: "/home", icon: "⌂" },
     { name: "Explore", path: "/explore", icon: "🗺️" },
     { name: "Services", path: "/services", icon: "✦" },
-    { name: "Feedback", path: "/feedback", icon: "📝" },
     { name: "Deals", path: "/deals", icon: "◈" },
     { name: "Blogs", path: "/blogs", icon: "✎" },
     { name: "About", path: "/about", icon: "◉" },
@@ -400,14 +399,7 @@ export default function Header() {
               ))}
             </ul>
           ) : (
-            <ul className="hdr-nav" role="list">
-              <li>
-                <a href="#features" className="hdr-nav-link">
-                  <span className="nav-dot" />
-                  Features
-                </a>
-              </li>
-            </ul>
+            <ul className="hdr-nav" role="list" aria-hidden="true" />
           )}
 
           {/* Desktop actions */}
@@ -607,14 +599,6 @@ export default function Header() {
             </>
           ) : (
             <>
-              <a
-                href="#features"
-                className="mob-nav-link"
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className="mob-nav-icon">✦</span> Features
-              </a>
-              <div className="mob-divider" />
               <div className="mob-actions">
                 <button
                   className="mob-btn-full mob-btn-outline"
